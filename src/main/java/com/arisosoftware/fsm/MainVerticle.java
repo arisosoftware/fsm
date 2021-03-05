@@ -15,3 +15,6 @@ public class MainVerticle extends AbstractVerticle {
 }
 
 //https://stackoverflow.com/questions/27075516/how-to-run-vert-x-verticle-on-eclipse
+// Run -> run config, set run class as 
+//io.vertx.core.Launcher
+// then in argument  run com.arisosoftware.fsm.MainVerticle
