@@ -14,6 +14,7 @@
 		<main.verticle>com.ariso.fsm.MainVerticle</main.verticle>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<slf4jVersion>1.6.1</slf4jVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -29,6 +30,7 @@
 	</dependencyManagement>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
@@ -48,6 +50,11 @@
 			<groupId>com.unquietcode.tools.jstate</groupId>
 			<artifactId>jstate</artifactId>
 			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4jVersion}</version>
 		</dependency>
 	</dependencies>
 
