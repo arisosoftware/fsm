@@ -1,0 +1,88 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>Dagre D3 Demo: TCP State Diagram</title>
+
+<link rel="stylesheet" href="demo.css">
+<script src="../d3.v5.min.js" charset="utf-8"></script>
+<script src="../dagre-d3.js"></script>
+
+<style id="css">
+body {
+  font: 300 14px 'Helvetica Neue', Helvetica;
+}
+
+.node rect {
+  stroke: #333;
+  fill: #fff;
+}
+
+.edgePath path {
+  stroke: #333;
+  fill: #333;
+  stroke-width: 1.5px;
+}
+</style>
+
+<h1>Dagre D3 Demo: TCP State Diagram</h1>
+
+<svg width=960 height=600><g/></svg>
+ 
+
+<script id="js">
+// Create a new directed graph
+var g = new dagreD3.graphlib.Graph().setGraph({});
+
+
+
+
+
+//================
+
+
+// workflow state list
+ var states = ["Draft", "Submitted", "UnderReview", "Authorized", "InProcess", "Processed",  ];
+
+
+// Automatically label each of the nodes
+  states.forEach(function(state) { g.setNode(state, { label: state }); });
+ // Set up the edges
+g.setEdge("Draft",	"Draft",	{ label: "Save(:LM:Reviewer)\n \nSendTo(:LM:Reviewer)\n \nTransferToMe(:LM:Reviewer)\n \nDelete(:LM:Reviewer" }); 
+g.setEdge("Draft",	"Submitted",	{ label: "Submit(:LM:Reviewer" }); 
+g.setEdge("Submitted",	"UnderReview",	{ label: "Save(:Authorizer" }); 
+g.setEdge("Submitted",	"Submitted",	{ label: "SendTo(:Authorizer)\n \nTransferToMe(:Authorizer" }); 
+g.setEdge("Submitted",	"Draft",	{ label: "Recall(:LM:Reviewer" }); 
+g.setEdge("UnderReview",	"Draft",	{ label: "Return(:Authorizer" }); 
+g.setEdge("UnderReview",	"UnderReview",	{ label: "SendTo(:Authorizer)\n \nTransferToMe(:Authorizer" }); 
+g.setEdge("UnderReview",	"Authorized",	{ label: "Authorized(:Authorizer" }); 
+g.setEdge("Authorized",	"UnderReview",	{ label: "Recall(:Authorizer" }); 
+g.setEdge("Authorized",	"InProcess",	{ label: "Save(:CCSA" }); 
+g.setEdge("InProcess",	"UnderReview",	{ label: "Return(:CCSA" }); 
+g.setEdge("InProcess",	"InProcess",	{ label: "Save(:CCSA)\n \nSendTo(:CCSA)\n \nTransferToMe(:CCSA" }); 
+g.setEdge("InProcess",	"Processed",	{ label: "Processed(:CCSA" }); 
+//================
+
+   
+var svg = d3.select("svg"),
+    inner = svg.select("g");
+
+// Set up zoom support
+var zoom = d3.zoom().on("zoom", function() {
+      inner.attr("transform", d3.event.transform);
+    });
+svg.call(zoom);
+
+// Create the renderer
+var render = new dagreD3.render();
+
+// Run the renderer. This is what draws the final graph.
+render(inner, g);
+
+// Center the graph
+var initialScale = 0.75;
+svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
+
+svg.attr('height', g.graph().height * initialScale + 40);
+</script>
+
+<script src="demo.js"></script>

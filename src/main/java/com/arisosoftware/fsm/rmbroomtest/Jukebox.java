@@ -68,10 +68,7 @@ public class Jukebox extends AbstractVerticle {
 				request.fail(500, ar.cause().getMessage());
 			}
 		});
- // ---------------------------------------------------------------------------------
  
-		logger.info("Play");
-		currentMode = State.PLAYING;
 	}
 
 	private void pause(Message<?> request) {
