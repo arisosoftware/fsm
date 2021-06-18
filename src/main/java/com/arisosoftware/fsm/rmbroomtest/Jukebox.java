@@ -34,7 +34,7 @@ public class Jukebox extends AbstractVerticle {
 		EventBus eventBus = vertx.eventBus();
 		eventBus.consumer(IP_list, this::list);
 		eventBus.consumer("jukebox.schedule", this::schedule);
-	 
+		//eventBus.consumer("jukebox.play", this::play);
 		eventBus.consumer("jukebox.pause", this::pause);
 
 		vertx.createHttpServer().requestHandler(this::httpHandler).listen(8080);
@@ -68,7 +68,10 @@ public class Jukebox extends AbstractVerticle {
 				request.fail(500, ar.cause().getMessage());
 			}
 		});
+ // ---------------------------------------------------------------------------------
  
+		logger.info("Play");
+		currentMode = State.PLAYING;
 	}
 
 	private void pause(Message<?> request) {
