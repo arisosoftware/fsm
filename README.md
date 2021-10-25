@@ -9,3 +9,18 @@
  https://github.com/UnquietCode/JState
  http://www.colm.net/open-source/ragel/
  
+
+
+^.*小时前
+^.*分钟前
+^.*回复
+展开.*条回复
+^​赞\n
+^​赞同[ 0-9]*
+^​踩\n
+
+
+赞同了该回答 start copy
+编辑于 end of copy
+前 - start comment copy
+​回复  end of comment copy and remove last line
