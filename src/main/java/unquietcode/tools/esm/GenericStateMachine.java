@@ -37,12 +37,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
-
 /**
- * Note that null is a valid state in this system, and
- * the initial starting point is null by default.
+ * Note that null is a valid state in this system, and the initial starting
+ * point is null by default.
  *
- * @author  Benjamin Fagin
+ * @author Benjamin Fagin
  * @version 12-23-2010
  */
 public class GenericStateMachine<T extends State> implements StateMachine<T> {
@@ -71,7 +70,6 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 	private StateContainer initial;
 	private StateContainer current;
 	private long transitions;
-
 
 	public GenericStateMachine() {
 		this(null);
@@ -167,12 +165,12 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 		Callable<Boolean> callable = () -> {
 			return doWithTransitionLock(() -> {
 				if (!current.transitions.containsKey(nextState)) {
-					throw new TransitionException("No transition exists between "+current+" and "+requestedState);
+					throw new TransitionException("No transition exists between " + current + " and " + requestedState);
 				}
 
 				try {
 					return _transition(nextState);
-				} catch (Exception e) {  // TODO maybe scope this to only our own exception types
+				} catch (Exception e) { // TODO maybe scope this to only our own exception types
 					List<Runnable> unfinished = executor.shutdownNow();
 
 					for (Runnable runnable : unfinished) {
@@ -435,7 +433,6 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 		};
 	}
 
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public HandlerRegistration onTransition(final T from, final T to, final TransitionHandler<T> callback) {
@@ -532,9 +529,7 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 				matchers.remove(matcher);
 
 				// recalculate the cache size on remove
-				Optional<Integer> max = matchers.stream()
-					.map(e -> e.pattern.length())
-					.max(Integer::compareTo);
+				Optional<Integer> max = matchers.stream().map(e -> e.pattern.length()).max(Integer::compareTo);
 
 				maxRecent = max.orElse(0);
 			});
@@ -552,7 +547,7 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 	}
 
 	@Override
-	public boolean addTransitions(T fromState, T...toStates) {
+	public boolean addTransitions(T fromState, T... toStates) {
 		return addTransitions(null, true, fromState, Arrays.asList(toStates));
 	}
 
@@ -567,7 +562,7 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 	}
 
 	@Override
-	public boolean addTransitions(TransitionHandler<T> callback, T fromState, T...toStates) {
+	public boolean addTransitions(TransitionHandler<T> callback, T fromState, T... toStates) {
 		return addTransitions(callback, true, fromState, Arrays.asList(toStates));
 	}
 
@@ -595,13 +590,15 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 				}
 			}
 
-			if (modified) { reset(); }
+			if (modified) {
+				reset();
+			}
 			return modified;
 		});
 	}
 
 	@Override
-	public boolean removeTransitions(T fromState, T...toStates) {
+	public boolean removeTransitions(T fromState, T... toStates) {
 		return removeTransitions(fromState, Arrays.asList(toStates));
 	}
 
@@ -621,12 +618,14 @@ public class GenericStateMachine<T extends State> implements StateMachine<T> {
 				}
 			}
 
-			if (modified) { reset(); }
+			if (modified) {
+				reset();
+			}
 			return modified;
 		});
 	}
 
-	private void removeCallback(TransitionHandler callback, T fromState, T...toStates) {
+	private void removeCallback(TransitionHandler callback, T fromState, T... toStates) {
 		Set<T> set = new HashSet<T>(Arrays.asList(toStates));
 
 		doWithTransitionLock(() -> {

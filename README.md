@@ -3,13 +3,25 @@
 
  
  
- http://ivanzuzak.info/noam/webapps/fsm2regex/
- https://stackoverflow.com/questions/36853077/convert-finite-state-machine-to-regular-expression
- https://blog.teemo.co/vertx-in-production-d5ca9e89d7c6
- https://github.com/UnquietCode/JState
- http://www.colm.net/open-source/ragel/
- 
+http://ivanzuzak.info/noam/webapps/fsm2regex/
 
+https://stackoverflow.com/questions/36853077/convert-finite-state-machine-to-regular-expression
+
+https://blog.teemo.co/vertx-in-production-d5ca9e89d7c6
+
+
+https://github.com/UnquietCode/JState ==  不好用
+
+http://www.colm.net/open-source/ragel/
+
+https://github.com/Childe-Chen/statemachine
+
+https://github.com/Childe-Chen/statemachine
+
+
+https://www.tadu.com/book/810720/1/?isfirstpart=true
+
+https://www.shubaow.net/192_192831/41174616.html
 
 ^.*小时前
 ^.*分钟前
@@ -24,3 +36,5 @@
 编辑于 end of copy
 前 - start comment copy
 ​回复  end of comment copy and remove last line
+
+
