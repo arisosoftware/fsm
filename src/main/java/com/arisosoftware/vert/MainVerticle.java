@@ -1,4 +1,4 @@
-package com.arisosoftware.fsm;
+package com.arisosoftware.vert;
 
 
 import io.vertx.core.AbstractVerticle;

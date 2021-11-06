@@ -1,11 +1,19 @@
-package com.github.zevada.stateful;
+package com.arisosoftware.fsm;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author arisosoftware@gmail.com License : MIT
+ *
+ * @param <State>
+ * @param <EventType>
+ */
 public class StateNode<State extends Enum<State>, EventType extends Enum<EventType>> {
+
 	private final Map<EventType, StateNode<State, EventType>> stateEdge;
 	private final List<Runnable> onEnterListeners;
 	private final List<Runnable> onExitListeners;

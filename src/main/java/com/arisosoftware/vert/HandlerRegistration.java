@@ -1,7 +1,7 @@
 /*******************************************************************************
  The MIT License (MIT)
 
- Copyright (c) 2018 Benjamin Fagin
+ Copyright (c) 2013 Benjamin Fagin
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of
  this software and associated documentation files (the "Software"), to deal in
@@ -21,29 +21,17 @@
  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 
-package unquietcode.tools.esm.routing;
-
-import unquietcode.tools.esm.HandlerRegistration;
+package com.arisosoftware.vert;
 
 /**
+ * Provides a simple mechanism to remove callbacks from the
+ * {@link StateMachine} instance after they have been attached
+ * to a transition, entry action, or exit action.
+ *
  * @author Ben Fagin
- * @version 2013-07-08
+ * @version 2013-07-07
  */
-public interface RoutableStateMachine<T> {
-
-	/**
-	 * Add a new router to the state machine. Order matters!
-	 * The decision of the first router to return a non-null
-	 * value is honored above the others.
-	 *
-	 * @param router to add
-	 * @return handle for unregistering
-	 */
-	HandlerRegistration routeOnTransition(StateRouter<T> router);
-
-	HandlerRegistration routeOnTransition(T from, T to, StateRouter<T> router);
-
-	HandlerRegistration routeBeforeEntering(T to, StateRouter<T> router);
-
-	HandlerRegistration routeAfterExiting(T from, StateRouter<T> router);
+@FunctionalInterface
+public interface HandlerRegistration {
+	void unregister();
 }

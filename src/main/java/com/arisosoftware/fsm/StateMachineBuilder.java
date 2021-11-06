@@ -1,15 +1,16 @@
-package com.github.zevada.stateful;
+package com.arisosoftware.fsm;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A builder for simple event based state machines
+ * @author arisosoftware@gmail.com License : MIT
  *
  * @param <State>     The state of the entity
  * @param <EventType> The event type to be handled
  */
-final public class StateMachineBuilder<State extends Enum<State>, EventType extends Enum<EventType>> {
+public class StateMachineBuilder<State extends Enum<State>, EventType extends Enum<EventType>> {
+
 	private final Map<State, StateNode<State, EventType>> nodes;
 	private final StateNode<State, EventType> root;
 
@@ -28,8 +29,8 @@ final public class StateMachineBuilder<State extends Enum<State>, EventType exte
 	 *
 	 * @return the final state machine
 	 */
-	public EventStateMachine<State, EventType> build() {
-		return new EventStateMachine<>(root);
+	public StateMachine<State, EventType> build() {
+		return new StateMachine<>(root);
 	}
 
 	/**

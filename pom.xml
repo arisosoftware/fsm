@@ -46,11 +46,8 @@
 			<artifactId>vertx-unit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.unquietcode.tools.jstate</groupId>
-			<artifactId>jstate</artifactId>
-			<version>3.1</version>
-		</dependency>
+		<!-- <dependency> <groupId>com.unquietcode.tools.jstate</groupId> <artifactId>jstate</artifactId> 
+			<version>3.1</version> </dependency> -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

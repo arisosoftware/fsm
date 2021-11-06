@@ -1,13 +1,13 @@
-package com.arisosoftware.fsm;
+package com.arisosoftware.fsm.rmbroomtest;
 
 import java.util.function.Consumer;
 
-public class State {
+public class SimpleConsumerExample {
 
 	public static void main(String args[]) {
 
 		/* Java Consumer example using a class */
-		SimpleConsumerExample sce = new SimpleConsumerExample();
+		ConsumerExample sce = new ConsumerExample();
 		sce.accept(new Long(2));
 
 		/* Functional Consumer example using inner class */
@@ -31,7 +31,7 @@ public class State {
 }
 
 /* Class implementing functional Consumer example */
-class SimpleConsumerExample implements Consumer<Long> {
+class ConsumerExample implements Consumer<Long> {
 	public void accept(Long t) {
 		System.out.println(t * t);
 	}
