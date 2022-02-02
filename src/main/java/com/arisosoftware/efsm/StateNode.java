@@ -1,4 +1,4 @@
-package com.arisosoftware.fsm;
+package com.arisosoftware.efsm;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -59,15 +59,9 @@ public class StateNode<State extends Enum<State>, EventType extends Enum<EventTy
 	public void addStateEdge(EventType eventType, StateNode<State, EventType> destination) {
 		stateEdge.put(eventType, destination);
 	}
-	
-	public void addOnonRunningListener(Runnable onRunningListener) {
-		onEnterListeners.add(onRunningListener);
-	}
-
-	
 
 	public void addOnEnterListener(Runnable onEnterListener) {
-		onRunningListeners.add(onEnterListener);
+		onEnterListeners.add(onEnterListener);
 	}
 
 	public void addOnExitListener(Runnable onExitListener) {

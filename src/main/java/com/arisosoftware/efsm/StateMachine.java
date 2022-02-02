@@ -1,4 +1,4 @@
-package com.arisosoftware.fsm;
+package com.arisosoftware.efsm;
 
 /**
  * 状态机有四个核心概念，这是所有状态机的基础: State, Transition, Event, Action.
@@ -42,14 +42,10 @@ public class StateMachine<State extends Enum<State>, EventType extends Enum<Even
 	}
 
 	
-	public void OnEventIn()
+	public void OnEventIn(StateEvent event)
 	{
 		
 	}
-	
-	public String EventData = null;
-	
-	
 	
 	/**
 	 * execute Event
@@ -66,16 +62,9 @@ public class StateMachine<State extends Enum<State>, EventType extends Enum<Even
 			throw new Exception(errormessage);
 		}
 
-		if (nextState == currentState)
-		{
-			currentState.onRunning();
-		}
-		else
-		{
-			currentState.onExit();
-			currentState = nextState;
-			currentState.onEnter();
-		}
+		currentState.onExit();
+		currentState = nextState;
+		currentState.onEnter();
 	}
 
 	/**

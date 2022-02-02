@@ -1,4 +1,4 @@
-package com.arisosoftware.fsm;
+package com.arisosoftware.efsm;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,20 +82,6 @@ public class StateMachineBuilder<State extends Enum<State>, EventType extends En
 		return this;
 	}
 
-	public StateMachineBuilder<State, EventType> onRun(State state, Runnable onRunner) {
-		StateNode<State, EventType> node = nodes.get(state);
-
-		if (node == null) {
-			node = new StateNode<>(state);
-			nodes.put(state, node);
-		}
-
-		node.addOnonRunningListener(onRunner);
-
-		return this;
-	}
-
-	
 	/**
 	 * Add a runnable to the state machine which will only be executed when the
 	 * state machine exits the specified state.

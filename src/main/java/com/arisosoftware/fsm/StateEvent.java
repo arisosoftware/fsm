@@ -1,5 +1,6 @@
 package com.arisosoftware.fsm;
 
+
 /**
  * 状态机有四个核心概念，这是所有状态机的基础: State, Transition, Event, Action.
  * 
@@ -17,15 +18,6 @@ package com.arisosoftware.fsm;
  * 
  * StateMachine 状态机，内含一个当前状态，能够响应输入事件．
  * 
- * State Class
- *     StateId
- *      Map(EventId, NextStateId)
- * Event -Class
- *     Event Id
- *     Event Name
- * 
- * 
- * 
  * 
  * 对状态机输入一个事件，状态机会根据当前状态和触发的事件唯一确定一个状态迁移。
  * 
@@ -33,55 +25,6 @@ package com.arisosoftware.fsm;
  * @param <EventType> The event type to be handled
  * @author arisosoftware@gmail.com License : MIT
  */
-public class StateMachine<State extends Enum<State>, EventType extends Enum<EventType>> {
+public class StateEvent {
 
-	private StateNode<State, EventType> currentState;
-
-	StateMachine(StateNode<State, EventType> startPoint) {
-		this.currentState = startPoint;
-	}
-
-	
-	public void OnEventIn()
-	{
-		
-	}
-	
-	public String EventData = null;
-	
-	
-	
-	/**
-	 * execute Event
-	 *　响应状态，如果需要
-	 * @param eventType The event type to be handled
-	 * @throws Exception
-	 */
-	public void updateStateOnEvent(EventType eventType) throws Exception {
-
-		StateNode<State, EventType> nextState = currentState.getNeighbor(eventType);
-
-		if (nextState == null) {
-			String errormessage = String.format("?,?", currentState.getState(), eventType);
-			throw new Exception(errormessage);
-		}
-
-		if (nextState == currentState)
-		{
-			currentState.onRunning();
-		}
-		else
-		{
-			currentState.onExit();
-			currentState = nextState;
-			currentState.onEnter();
-		}
-	}
-
-	/**
-	 * @return The current state of the state machine
-	 */
-	public State getState() {
-		return currentState.getState();
-	}
 }

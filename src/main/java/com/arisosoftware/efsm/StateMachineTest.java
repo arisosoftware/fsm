@@ -1,8 +1,7 @@
-package com.arisosoftware.fsm.show;
+package com.arisosoftware.efsm;
+ 
 
-import com.arisosoftware.fsm.*;
-
-public class CSVParser {
+public class StateMachineTest {
 
 	enum State {
 		INIT, RUNNING, PAUSED, COMPLETED, HEADER,
@@ -15,7 +14,7 @@ public class CSVParser {
 	public static void main(String[] args) throws Exception {
 
 		StateMachine<State, EventType> stateMachine = new StateMachineBuilder<State, EventType>(State.INIT)
-				.addTransition(State.INIT, EventType.RUN, State.RUNNING) 
+				.addTransition(State.INIT, EventType.RUN, State.RUNNING)
 				.addTransition(State.RUNNING, EventType.PAUSE, State.PAUSED)
 				.addTransition(State.RUNNING, EventType.END, State.COMPLETED)
 				.addTransition(State.PAUSED, EventType.RUN, State.RUNNING)
