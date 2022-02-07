@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.arisosoftware.fsm.*;
-import com.arisosoftware.textanalysis.n1.Chapter;
+
 
 public class ZhihutxtFilter {
 
@@ -32,6 +32,8 @@ public class ZhihutxtFilter {
 			.onEnter(State.RECORD, new Runnable() {
 					@Override
 					public void run() {
+						
+						
 						System.out.println("..");
 					}} )
 			
@@ -52,7 +54,8 @@ public class ZhihutxtFilter {
 			String line = s.nextLine();
 			if (line!=null)
 			{
-				stateMachine.HandleString(line);
+				stateMachine.EventData =line;
+				
 			}
 		}
 		s.close();

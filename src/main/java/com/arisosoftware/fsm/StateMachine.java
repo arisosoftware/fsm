@@ -11,7 +11,9 @@ package com.arisosoftware.fsm;
  * 
  * Action ，动作。
  * 	事件发生以后要执行动作。例如事件是“借书”，动作是“借”。 编程的时候，一个 Action 一般就对应一个函数。
- * 	动作是在给定时刻要进行的活动的描述。有多种类型的动作： 进入动作（entry action）：在进入状态时进行 退出动作：在退出状态时进行
+ * 	动作是在给定时刻要进行的活动的描述。有多种类型的动作： 
+ * 			进入动作（entry action） 
+ * 			退出动作：在退出状态时进行
  * 	输入动作：依赖于当前状态和输入条件进行 
  * 	转移动作：在进行特定转移时进行
  * 
@@ -26,8 +28,7 @@ package com.arisosoftware.fsm;
  * 
  * 
  * 
- * 
- * 对状态机输入一个事件，状态机会根据当前状态和触发的事件唯一确定一个状态迁移。
+ * 对状态机输入一个事件，状态机会根据当前状态和触发的事件唯一确定一个状态迁移。并调用相应event handler runner
  * 
  * @param <State>     The state of the entity
  * @param <EventType> The event type to be handled
@@ -47,7 +48,7 @@ public class StateMachine<State extends Enum<State>, EventType extends Enum<Even
 		
 	}
 	
-	public String EventData = null;
+	public Object EventData = null;
 	
 	
 	
@@ -68,7 +69,7 @@ public class StateMachine<State extends Enum<State>, EventType extends Enum<Even
 
 		if (nextState == currentState)
 		{
-			currentState.onRunning();
+			currentState.onRunning(EventData);
 		}
 		else
 		{
