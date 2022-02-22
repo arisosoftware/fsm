@@ -43,9 +43,10 @@ public class StateMachine<State extends Enum<State>, EventType extends Enum<Even
 	}
 
 	
-	public void OnEventIn()
+	public void OnRun(Object data)
 	{
-		
+		EventData = data;
+		currentState.onRunning(data);
 	}
 	
 	public Object EventData = null;

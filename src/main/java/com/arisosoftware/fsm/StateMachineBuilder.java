@@ -71,25 +71,13 @@ public class StateMachineBuilder<State extends Enum<State>, EventType extends En
 	 */
 	public StateMachineBuilder<State, EventType> onEnter(State state, Runnable onEnter) {
 		StateNode<State, EventType> node = nodes.get(state);
-
-		if (node == null) {
-			node = new StateNode<>(state);
-			nodes.put(state, node);
-		}
-
 		node.addOnEnterListener(onEnter);
-
 		return this;
 	}
 
 	public StateMachineBuilder<State, EventType> onRun(State state, Runnable onRunner) {
 		StateNode<State, EventType> node = nodes.get(state);
-
-		if (node == null) {
-			node = new StateNode<>(state);
-			nodes.put(state, node);
-		}
-
+ 
 		node.addOnonRunningListener(onRunner);
 
 		return this;
@@ -105,12 +93,7 @@ public class StateMachineBuilder<State extends Enum<State>, EventType extends En
 	 */
 	public StateMachineBuilder<State, EventType> onExit(State state, Runnable onExit) {
 		StateNode<State, EventType> node = nodes.get(state);
-
-		if (node == null) {
-			node = new StateNode<>(state);
-			nodes.put(state, node);
-		}
-
+ 
 		node.addOnExitListener(onExit);
 
 		return this;

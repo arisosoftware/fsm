@@ -24,52 +24,46 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-  class Chapter {
+
+class Chapter {
 	public String Title;
 	public StringBuilder Text;
-	public Chapter()
-	{
+
+	public Chapter() {
 		Text = new StringBuilder();
 	}
 }
+
 public class SplitTxtNovel {
-	
-	static Pattern p1 = Pattern.compile("<![^>]*>",Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+
+	static Pattern p1 = Pattern.compile("<![^>]*>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	public static void main(String[] args) throws Exception {
 		String filePath = "/tmp/novel1.txt";
 		ArrayList<Chapter> article = new ArrayList<Chapter>();
-		Chapter row =  new Chapter();;
-		
-		   
-		    
-		    
+		Chapter row = new Chapter();
+		;
+
 		Scanner s = new Scanner(new File(filePath));
-		while(s.hasNextLine())
-		{
+		while (s.hasNextLine()) {
 			String line = s.nextLine();
-			if (line!=null)
-			{
-				 
+			if (line != null) {
+
 				line = line.replace("UU看书", "");
-				 line = line.replace("www.uｕkansｈu.ｃom", "");
-				 //line = line.replace("www.uｕkansｈu.cｏm", "");
-				 
-				 
-				 
+				line = line.replace("www.uｕkansｈu.ｃom", "");
+				// line = line.replace("www.uｕkansｈu.cｏm", "");
+
 				line = p1.matcher(line).replaceAll("");
 				/*
 				 * if (line.trim().length()<1) continue;
 				 */
-				if (line.indexOf("小说网")>0)
+				if (line.indexOf("小说网") > 0)
 					continue;
-				
+
 				if (line.startsWith("===第")) {
 					if (row == null) {
 						row = new Chapter();
-					}
-					else
-					{
+					} else {
 						article.add(row);
 						row = new Chapter();
 					}
@@ -78,51 +72,40 @@ public class SplitTxtNovel {
 					row.Text.append(line).append("\n");
 				}
 			}
-		
+
 		}
 		article.add(row);
 		s.close();
 		System.out.println("##### for JDK 8+");
-	
+
 		FileOutputStream fos = new FileOutputStream(filePath + "X");
-		 
+
 		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
-		    
+
 			for (int i = article.size() - 1; i >= 0; i--) {
 				Chapter ch = article.get(i);
-				if (ch.Title!=null)
+				if (ch.Title != null)
 					w.write(ch.Title);
-				if (ch.Text!=null)
+				if (ch.Text != null)
 					w.write(ch.Text.toString());
 			}
-		}  
+		}
 	}
-	
+
 	/*
 	 * 
-		try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {
-
-			foreach(String : stream)
-					{
-				
-					}
-			stream.forEach(s -> {
-
-				if (s.startsWith("===第")) {
-					if (row == null) {
-						article.add(row);
-						row = new Chapter();
-					}
-					row.Title = s;
-				} else {
-					row.Text.append(s).append("\n");
-				}
-			});
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+	 * try (Stream<String> stream = Files.lines(Paths.get(filePath),
+	 * StandardCharsets.UTF_8)) {
+	 * 
+	 * foreach(String : stream) {
+	 * 
+	 * } stream.forEach(s -> {
+	 * 
+	 * if (s.startsWith("===第")) { if (row == null) { article.add(row); row = new
+	 * Chapter(); } row.Title = s; } else { row.Text.append(s).append("\n"); } });
+	 * 
+	 * } catch (IOException e) { e.printStackTrace(); }
+	 * 
 	 */
 
 	public static List<String> toStringArray(String sourceString) {

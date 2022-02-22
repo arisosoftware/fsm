@@ -13,15 +13,13 @@ import java.util.Map;
  * @param <EventType>
  */
 public class StateNode<State extends Enum<State>, EventType extends Enum<EventType>> {
-
-	
-	
 	
 	private final Map<EventType, StateNode<State, EventType>> stateEdge;
 	private final List<Runnable> onEnterListeners;
 	private final List<Runnable> onExitListeners;
 	private final List<Runnable> onRunningListeners;
-	
+
+	 
 	private final State state;
 
 	StateNode(State state) {
@@ -34,7 +32,7 @@ public class StateNode<State extends Enum<State>, EventType extends Enum<EventTy
 
 	public State getState() {
 		return state;
-	}
+	}  
 
 	public StateNode<State, EventType> getNeighbor(EventType eventType) {
 		return stateEdge.get(eventType);
