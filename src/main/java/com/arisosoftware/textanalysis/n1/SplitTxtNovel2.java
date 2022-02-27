@@ -25,8 +25,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,124 +35,212 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
 public class SplitTxtNovel2 {
-
 	static Pattern p1 = Pattern.compile("<![^>]*>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
-	public static void main(String[] args) throws Exception {
-		String filePath = "/tmp/sdyx"; //射雕英雄
-		
-	 
-		
-		//这篇java的目的是把所有 :   说道: 的前3个字找出来,然后统计出最多的列表.
-		
-		ArrayList<String> nameList = new ArrayList<String>(); 
-		
-		Scanner s = new Scanner(new File(filePath));
-		while (s.hasNextLine()) {
-			String line = s.nextLine();
-			if (line != null) {
+	static void StoreArrayToFile(List<String> data, String filename) {
 
-				line = line.replace("”", ".");
-				line = line.replace("。", ".");
-				line = line.replace("，", ".");
-				line = line.replace("：", ".");
-				line = line.replace("？", ".");
-				 line = line.replace("“", ".");
-				 line = line.replace("；", ".");
-				 line = line.replace("）", ".");
-				 line = line.replace("‘", ".");
-				 line = line.replace("！", "."); 
-				 line = line.replace("（", ".");
-				 
-				 
-				if (line.indexOf("道")>0)
-				{
-//					int fId = line.indexOf("说道：“");
-//					
-//					if (fId>5)
-//					{
-//						String name5w = line.substring(fId-5,fId);
-//						nameList.add(name5w);
-//					}
-					
-					for(int i=0; i+4<line.length(); i++) {
-						String word = line.substring(i,i+4);
-						nameList.add(word);
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(filename);
+			try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
+				data.stream().forEach((k) -> {
+					try {
+						w.write(k + "\n");
+					} catch (IOException e) {
 					}
-				}
-				
-				}
-
+				}); // output
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
 		}
-		s.close();
-		System.out.println("##### for JDK 8+");
+	}
 
-		
+	static void SaveListByGroupby(int minCount, String OutputFilepath, List<String> datalist) {
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(OutputFilepath);
+			try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
+				datalist.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet()
+						.stream()
+
+						.sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder())
+								.thenComparing(Map.Entry.comparingByKey()))
+						.filter((k) -> {
+							long val = k.getValue();
+							if (val < minCount)
+								return false;
+
+							return true;
+						}).forEach((k) -> {
+							try {
+								w.write(k.getKey().toString() + ":" + k.getValue().toString() + "\n");
+							} catch (IOException e) {
+							}
+						}); // output
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+
+	}
+	
+	
+	static ArrayList<String> GetTop10(int TopTen,int minCount,  List<String> datalist) {
+		 ArrayList<String> top10 = new ArrayList<String>();
 		 
-		FileOutputStream fos = new FileOutputStream(filePath + "X");
-		
-
-		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
-			nameList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet()
-					.stream()
+				datalist.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet()
+						.stream()
+						.sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder())
+								.thenComparing(Map.Entry.comparingByKey()))
+						.filter((k) -> {
+							long val = k.getValue();
+							if (val < minCount)
+								return false;
+							return true;
+						}).limit(TopTen)
+						.forEach((k) -> {
+							top10.add(k.getKey());
+						}); // output
 					
-					.sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder())
-							.thenComparing(Map.Entry.comparingByKey()))
-					.filter((k)-> {
-				 		
-						String key = k.getKey().toString();
-						long val = k.getValue();
-						
-						if (val<22)
-							return false;
-						
-						
-						return true;
-					})
-					.forEach((k) -> {
-						try {
-							w.write(k.getKey().toString()+":"+k.getValue().toString()+"\n");
-						} catch (IOException e) {
-						}
-					} ); // output
+				return top10;
+	}
+
+	
+
+	static ArrayList<String> SplitByLen(int minCount,  String[] inputList) {
+		ArrayList<String> nameList = new ArrayList<String>();
+		for (int i = 0; i < inputList.length; i++) {
+			String line = inputList[i];
+			if (line.length() > minCount) {
+				for (int j = 0; j + minCount < line.length(); j++) {
+					String word = line.substring(j, j + minCount);
+					nameList.add(word);
+				}
+			}
+		}
+		return nameList;
+	}
+
+	private static String readLineByLineJava8(String filePath) {
+		StringBuilder contentBuilder = new StringBuilder();
+		try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {
+			stream.forEach(line -> {
+				line = line.replace("”", " ");
+				line = line.replace("。", " ");
+				line = line.replace("，", " ");
+				line = line.replace("：", " ");
+				line = line.replace("？", " ");
+				line = line.replace("“", " ");
+				line = line.replace("；", " ");
+				line = line.replace("）", " ");
+				line = line.replace("‘", " ");
+				line = line.replace("！", " ");
+				line = line.replace("（", " ");
+				line = line.replace("　", " ");
+				line = line.replace("  ", " ");
+				line = line.replace("  ", " ");
+				line = line.trim();
+				if (line.length() > 1) {
+					contentBuilder.append(line).append(" ");
+				}
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-//	    
-//	    
-//		
-//
-//		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) { 
-//			
-//			for (int i = article.size() - 1; i >= 0; i--) {
-//				Chapter ch = article.get(i);
-//				if (ch.Title != null)
-//					w.write(ch.Title);
-//				if (ch.Text != null)
-//					w.write(ch.Text.toString());
-//			}
-//		}
+		return contentBuilder.toString();
 	}
 
-	/*
-	 * 
-	 * try (Stream<String> stream = Files.lines(Paths.get(filePath),
-	 * StandardCharsets.UTF_8)) {
-	 * 
-	 * foreach(String : stream) {
-	 * 
-	 * } stream.forEach(s -> {
-	 * 
-	 * if (s.startsWith("===第")) { if (row == null) { article.add(row); row = new
-	 * Chapter(); } row.Title = s; } else { row.Text.append(s).append("\n"); } });
-	 * 
-	 * } catch (IOException e) { e.printStackTrace(); }
-	 * 
-	 */
+	public static void main(String[] args) throws Exception {
+		String filePath = "/tmp/sdyx"; // 射雕英雄
 
+//这篇java的目的是把所有 :   说道: 的前3个字找出来,然后统计出最多的列表.
+
+		ArrayList<String> nameList = new ArrayList<String>();
+		String fulltext = readLineByLineJava8(filePath);
+		String[] inputList = fulltext.split(" ");
+		ArrayList<String> T2 = null;
+		ArrayList<String> T3 = new ArrayList<String>();
+		System.out.println("##### for JDK 8+" + nameList.size());
+		ArrayList<String> T1 = null;
+		
+		for(int r = 0; r<100; r++)
+		{
+			T3.addAll( Iter(r, fulltext));
+			System.out.println("##### Rank " + r + " WordList "+ T3.size());
+		}
+		
+		StoreArrayToFile(T3, "/tmp/T3");
+		
+		
+//		StoreArrayToFile(T1, "/tmp/T1");
+//		SaveListByGroupby(3, "/tmp/T1A", T1);
+//
+//		T1 = SplitByLen(3,inputList);
+//		StoreArrayToFile(T1, "/tmp/T2");
+//		SaveListByGroupby(3, "/tmp/T2A", T1);
+//
+//		T1 = SplitByLen(2,inputList);
+//		StoreArrayToFile(T1, "/tmp/T1");
+//		T2 = GetTop10(2, T1);
+//		T3.addAll(T2);
+//		for (int x1 =0; x1<T2.size(); x1++)
+//		{
+//			fulltext = fulltext.replace(T2.get(x1),"");
+//		}
+//		
+//		inputList = fulltext.split(" ");
+//		T1 = SplitByLen(2,inputList);
+//		StoreArrayToFile(T1, "/tmp/T2");
+//		T2 = GetTop10(2, T1);
+//		T3.addAll(T2);
+//		for (int x1 =0; x1<T2.size(); x1++)
+//		{
+//			
+//			fulltext = fulltext.replace(T2.get(x1),"");
+//		}
+//		
+//		inputList = fulltext.split(" ");
+//		T1 = SplitByLen(2,inputList);
+//		StoreArrayToFile(T1, "/tmp/T3");
+//		T2 = GetTop10(2, T1);
+//		T3.addAll(T2);
+//		for (int x1 =0; x1<T2.size(); x1++)
+//		{
+//			fulltext = fulltext.replace(T2.get(x1),"");
+//		}
+//		StoreArrayToFile(T3, "/tmp/T3X");
+//		SaveListByGroupby(3, "/tmp/T3A", T1);
+		
+	}
+	
+	static ArrayList<String>  Iter(int Id, String fulltext)
+	{
+		String[] inputList = fulltext.split(" ");
+		ArrayList<String> T2 = SplitByLen(2,inputList);
+		ArrayList<String> T3 = SplitByLen(3,inputList);
+		
+		ArrayList<String>TopWord2 = GetTop10(5,100, T2);
+		ArrayList<String>TopWord3 = GetTop10(5,100, T3);
+		
+		for (int x1 =0; x1<T3.size(); x1++)
+		{
+			fulltext = fulltext.replace(T3.get(x1),"");
+		}
+		
+		for (int x1 =0; x1<T2.size(); x1++)
+		{
+			fulltext = fulltext.replace(T2.get(x1),"");
+		}
+		 System.gc();
+		 TopWord2.addAll(TopWord3);
+		 return TopWord2;
+	}
+	
 	public static List<String> toStringArray(String sourceString) {
 		char[] charArrays = new char[sourceString.length()];
 		charArrays = sourceString.toCharArray();
@@ -164,5 +250,4 @@ public class SplitTxtNovel2 {
 		}
 		return stringArray;
 	}
-
 }
