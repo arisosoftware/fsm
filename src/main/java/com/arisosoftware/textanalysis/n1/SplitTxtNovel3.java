@@ -35,7 +35,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SplitTxtNovel2 {
+
+/*
+ * the java 8 performance is not good. update to another one.
+ */
+public class SplitTxtNovel3 {
 	static Pattern p1 = Pattern.compile("<![^>]*>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	static void StoreArrayToFile(List<String> data, String filename) {
@@ -112,16 +116,14 @@ public class SplitTxtNovel2 {
 
 	
 
-	static ArrayList<String> SplitByLen(int minCount,  String[] inputList) {
-		ArrayList<String> nameList = new ArrayList<String>();
-		for (int i = 0; i < inputList.length; i++) {
-			String line = inputList[i];
-			if (line.length() > minCount) {
-				for (int j = 0; j + minCount < line.length(); j++) {
-					String word = line.substring(j, j + minCount);
-					nameList.add(word);
-				}
-			}
+	static ArrayList<String> SplitByLen(int minCount,  String  fulltext) {
+		int fulltextlen = fulltext.length();
+		int length = (int)((fulltextlen/minCount)*0.8);
+		ArrayList<String> nameList = new ArrayList<String>(length);
+		for (int j = 0; j + minCount < fulltextlen; j++) {
+			String word = fulltext.substring(j, j + minCount);
+			if (!word.contains(" "))
+				nameList.add(word);
 		}
 		return nameList;
 	}
@@ -154,55 +156,15 @@ public class SplitTxtNovel2 {
 		String fulltext = readLineByLineJava8(filePath);
 		T.addAll(Iter(1,fulltext));
 		StoreArrayToFile(T, "/tmp/T1");
-//		StoreArrayToFile(T1, "/tmp/T1");
-//		SaveListByGroupby(3, "/tmp/T1A", T1);
-//
-//		T1 = SplitByLen(3,inputList);
-//		StoreArrayToFile(T1, "/tmp/T2");
-//		SaveListByGroupby(3, "/tmp/T2A", T1);
-//
-//		T1 = SplitByLen(2,inputList);
-//		StoreArrayToFile(T1, "/tmp/T1");
-//		T2 = GetTop10(2, T1);
-//		T3.addAll(T2);
-//		for (int x1 =0; x1<T2.size(); x1++)
-//		{
-//			fulltext = fulltext.replace(T2.get(x1),"");
-//		}
-//		
-//		inputList = fulltext.split(" ");
-//		T1 = SplitByLen(2,inputList);
-//		StoreArrayToFile(T1, "/tmp/T2");
-//		T2 = GetTop10(2, T1);
-//		T3.addAll(T2);
-//		for (int x1 =0; x1<T2.size(); x1++)
-//		{
-//			
-//			fulltext = fulltext.replace(T2.get(x1),"");
-//		}
-//		
-//		inputList = fulltext.split(" ");
-//		T1 = SplitByLen(2,inputList);
-//		StoreArrayToFile(T1, "/tmp/T3");
-//		T2 = GetTop10(2, T1);
-//		T3.addAll(T2);
-//		for (int x1 =0; x1<T2.size(); x1++)
-//		{
-//			fulltext = fulltext.replace(T2.get(x1),"");
-//		}
-//		StoreArrayToFile(T3, "/tmp/T3X");
-//		SaveListByGroupby(3, "/tmp/T3A", T1);
-		
+ 
 	}
 	
 	static ArrayList<String>  Iter(int Id, String fulltext)
 	{
-		String[] inputList = fulltext.split(" ");
-		ArrayList<String> T2 = SplitByLen(2,inputList);
-		ArrayList<String> T3 = SplitByLen(3,inputList);
-		
-
-
+		 
+		ArrayList<String> T2 = SplitByLen(2,fulltext);
+		ArrayList<String> T3 = SplitByLen(3,fulltext);
+		 
 		ArrayList<String>TopWord2 = GetTop10(5,100, T2);
 		ArrayList<String>TopWord3 = GetTop10(5,100, T3);
 		
