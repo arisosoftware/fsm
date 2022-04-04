@@ -42,14 +42,14 @@ public class History {
 	
 	public void addHistory(String line) {
 
-		System.out.println("#" + historyCount + ">>" + line + "<<");
+	//	System.out.println("#" + historyCount + ">>" + line + "<<");
 
 		history.add(line);
 		historyCount++;
-		if (historyCount > 1000) {
+		if (historyCount > 3000) {
 			historyCount--;
 			String pop = history.pop();
-			System.out.println("#Pop" + pop);
+		//	System.out.println("#Pop" + pop);
 		}
 	}
 

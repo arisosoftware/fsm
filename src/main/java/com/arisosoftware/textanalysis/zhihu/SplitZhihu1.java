@@ -41,7 +41,7 @@ public class SplitZhihu1 {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String filePath = "/media/airsoft/lexar/tmp/a22";
+		String filePath = "/tmp/a1";
 
 		int StateId = 0;
 
@@ -60,7 +60,7 @@ public class SplitZhihu1 {
 				switch (StateId) {
 				case 0:
 
-					if (line.equals("关注问题​写回答")) // exit
+					if (line.endsWith("​写回答")) // exit
 					{
 
 						String xl = history.GetLast(1);
@@ -119,7 +119,7 @@ public class SplitZhihu1 {
 											"添加评论",
 											"赞赏",
 											"​分享",
-											"​\n\n",
+											"​展开阅读全文",
 											"​收藏"
 											}, 
 									new String[]{"","","","","","","",})  ;		
@@ -146,19 +146,27 @@ public class SplitZhihu1 {
 		}
 		
 	  
-		FileOutputStream fos = new FileOutputStream(filePath + "X");
+		FileOutputStream fos = new FileOutputStream(filePath + "X.md");
 
 		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
 				
 			w.write(question.Title);
 			w.write("\n");
-			for (int i = question.chapter.size() - 1; i >= 0; i--) {
+			for (int i = 0; i< question.chapter.size() - 1; i++) {
 				Chapter cc = question.chapter.get(i);
-				 w.write("by "+cc.User);
+				 w.write("### "+cc.User);
 				 w.write("\n");
-				 w.write(cc.Body);
+				 String body = cc.Body;
+				 body = body.replaceAll("\n\n", "\n");
+		 
+				 body = body.replaceAll("^已赞同 [0-9]*", "");
+				 body = body.replaceAll("赞同 [0-9]*", "");
+				 body = body.replaceAll("展开阅读全文", "");
+				  
+				 body = body.replaceAll("[0-9]* 条评论", "");		   
+				 w.write(body);
 				 w.write("\n");
-				 w.write("\n--------------------\n");
+		 
 			}
 		}
 
