@@ -1,4 +1,4 @@
-package com.arisosoftware.textanalysis.n1;
+package com.arisosoftware.textanalysis.zhihu;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /*
  * the java 8 stream performance is not good. update to another one.
  */
-public class SplitTxtNovel3 {
+public class ZhihuPureTxt1 {
 	static Pattern p1 = Pattern.compile("<![^>]*>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	static void StoreArrayToFile(List<String> data, String filename) {
