@@ -139,10 +139,15 @@ public class History {
 	}
 
 	public StringBuilder GetLastUntilMatch(String match) {
+		return GetLastUntilMatch(match,0);
+	}
+
+	
+	public StringBuilder GetLastUntilMatch(String match, int skipIdx) {
 		StringBuilder sb = new StringBuilder();
 
 		LookupInRange(match, historyCount);
-		int i = historyCount - 2;
+		int i = historyCount - 2- skipIdx;
 		int beginLine = i;
 		for (; i > 0; i--) {
 			String data = history.get(i);
@@ -157,7 +162,7 @@ public class History {
 
 		return sb;
 	}
-
+	
 	public String GetLastUntilMatch__old1(String match) {
 		StringBuilder sb = new StringBuilder();
 		int i = historyCount - 2;
@@ -195,5 +200,28 @@ public class History {
 
 		return null;
 	}
+	
+	public String FindFirstSameSubseqString(int range) {
+
+		int reidx = historyCount - range - 1;
+		String pData = "";
+
+		for (int i = historyCount - 1; i > reidx; i--) {
+			String data = history.get(i);
+			if (data.length() >= 1) {
+				if (data.equals(pData)) {
+					return data;
+
+				}
+				
+				pData = data;
+			}
+
+		}
+
+		return null;
+	}
+	
+	
 
 }

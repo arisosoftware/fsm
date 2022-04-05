@@ -41,14 +41,15 @@ public class SplitZhihu1 {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String filePath = "/tmp/a1";
+		String filePath = "/tmp/b1";
 
 		int StateId = 0;
 
 		History history = new History();
 		Question question = new Question();
-		 
+
 		Chapter c = new Chapter();
+		Comment comment = new Comment();
 		Scanner s = new Scanner(new File(filePath));
 		String LastStateLine = null;
 		while (s.hasNextLine()) {
@@ -89,13 +90,18 @@ public class SplitZhihu1 {
 				case 2:
 					// on enter
 					if (line.endsWith("人赞同了该回答")) {
-						String xl = history.GetDuplicateStringInRange(5);
+						String xl = history.FindFirstSameSubseqString(15);
+						question.chapter.add(c);
+						c = new Chapter();
 						c.User = xl;
 						log(xl);
 						StateId = 3;
 						LastStateLine = line;
 					}
 
+					if (line.equals("​切换为时间排序")) {
+						StateId = 4;
+					}
 					break;
 				case 3:
 					// on enter
@@ -110,72 +116,138 @@ public class SplitZhihu1 {
 
 						if (line1.equals("​收藏") && line2.equals("​分享")) {
 							String sb = history.GetLastUntilMatch(LastStateLine).toString();
-							
-							sb = StringUtils.replace(sb,"","");
-									
-							sb= StringUtils.replaceEach(sb, 
-									new String[]{"真诚赞赏，手留余香",
-											"还没有人赞赏，快来当第一个赞赏的人吧！",
-											"添加评论",
-											"赞赏",
-											"​分享",
-											"​展开阅读全文",
-											"​收藏"
-											}, 
-									new String[]{"","","","","","","",})  ;		
-				 			 
+
+							sb = StringUtils.replace(sb, "", "");
+
+							sb = StringUtils.replaceEach(
+									sb, new String[] { "真诚赞赏，手留余香", "还没有人赞赏，快来当第一个赞赏的人吧！", "添加评论", "赞赏", "​分享",
+											"​展开阅读全文", "​收藏", "​收起评论", },
+									new String[] { "", "", "", "", "", "", "", "", });
+
 							c.Body = sb;
 
 							StateId = 2;
 							log(sb);
 							LastStateLine = line;
-							question.chapter.add(c);
 						
+
 							String xl = history.GetLastMatchInRange(new String[] { "发布于", "编辑于", }, 11, '^');
 							LastStateLine = xl;
-							c = new Chapter();
-
+							
 						}
 
 //System.exit(1);
 					}
 
 					break;
+
+				case 4: {
+					String line1 = history.GetLast(2);
+					String line2 = history.GetLast(1);
+					if (line1.matches("[0-9]+ 条评论") && line2.startsWith("​切换为")) {
+						comment = new Comment();
+						comment.User = line;
+						LastStateLine = line;
+						StateId = 5;
+						c.comments.add(comment);
+					}
+
+					if (line.matches("[0-9]*下一页")
+							|| line.equals("写下你的评论...")
+							) {
+						LastStateLine = line;
+						StateId = 2;
+					}
+					break;
+				}
+
+				case 5: {
+					LastStateLine = line;
+					StateId = 6;
+					break;
+				}
+				case 6: {
+					if (line.equals("​ 举报")) {
+						String xl = history.GetLastUntilMatch(LastStateLine,2).toString();
+
+						comment.Body = xl;
+						 
+						StateId = 7;
+					}
+					
+					
+					break;
+				}
+				
+				case 7: {
+					if (line.matches("[0-9]*下一页")
+							|| line.equals("写下你的评论...")
+							) {
+						LastStateLine = line;
+						StateId = 2;
+						break;
+					}
+					
+					if (line.matches("展开其他 [0-9]* 条回复"))
+					{
+						break;
+					}
+					else
+					{
+						comment = new Comment();
+						comment.User = line;
+						LastStateLine = line;
+						StateId = 5;	c.comments.add(comment);
+						break;
+					}
+				 
+				}
+				
+				
 				}
 			}
 		}
-		
-	  
+
 		FileOutputStream fos = new FileOutputStream(filePath + "X.md");
 
 		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
-				
+
 			w.write(question.Title);
 			w.write("\n");
-			for (int i = 0; i< question.chapter.size() - 1; i++) {
+			for (int i = 0; i < question.chapter.size() - 1; i++) {
 				Chapter cc = question.chapter.get(i);
-				 w.write("### "+cc.User);
-				 w.write("\n");
-				 String body = cc.Body;
-				 body = body.replaceAll("\n\n", "\n");
-		 
-				 body = body.replaceAll("^已赞同 [0-9]*", "");
-				 body = body.replaceAll("赞同 [0-9]*", "");
-				 body = body.replaceAll("展开阅读全文", "");
-				  
-				 body = body.replaceAll("[0-9]* 条评论", "");		   
-				 w.write(body);
-				 w.write("\n");
-		 
+				if (cc.User == null)
+					continue;
+				
+				w.write("\n### " + cc.User);
+				w.write("\n");
+				String body = cc.Body;
+				body = body.replaceAll("\n\n", "\n");
+				body = body.replaceAll("\n\n", "\n");
+				body = body.replaceAll("\n\n", "\n");
+
+				body = body.replaceAll("^已赞同 [0-9]*", "");
+				body = body.replaceAll("赞同 [0-9]*", "");
+				body = body.replaceAll("展开阅读全文", "");
+
+				body = body.replaceAll("[0-9]* 条评论", "");
+				w.write(body);
+				
+				for(int ic = 0; ic<cc.comments.size();ic++)
+				{
+					Comment cm = cc.comments.get(ic);
+					if (cm.User==null)
+						continue;
+					w.write("\t" + 
+						StringUtils.rightPad(cm.User, 15,"　")+":\t"+cm.Body );
+				 
+				}
+
 			}
 		}
 
 	}
 
-	
-	
-	
-	
 	/*
 	 * 
 	 * try (Stream<String> stream = Fles.lines(Paths.get(filePath),
