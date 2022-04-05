@@ -41,8 +41,13 @@ public class SplitZhihu1 {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String filePath = "/tmp/b1";
-
+		
+	
+		String filePath = "/tmp/a2";
+		if (args.length>1)
+		{
+			filePath = args[0];
+		}
 		int StateId = 0;
 
 		History history = new History();
