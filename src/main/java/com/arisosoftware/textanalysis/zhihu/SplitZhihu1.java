@@ -57,12 +57,21 @@ public class SplitZhihu1 {
 		Comment comment = new Comment();
 		Scanner s = new Scanner(new File(filePath));
 		String LastStateLine = null;
+		int lineNo=0;
 		while (s.hasNextLine()) {
+			lineNo++;
 			String line = s.nextLine().trim();
 			if (line != null) {
 
 				history.addHistory(line);
 
+				if (lineNo==706)
+				{
+					System.out.println(line);
+				}
+					
+				
+				
 				switch (StateId) {
 				case 0:
 
@@ -132,7 +141,7 @@ public class SplitZhihu1 {
 							c.Body = sb;
 
 							StateId = 2;
-							log(sb);
+						//	log(sb);
 							LastStateLine = line;
 						
 
@@ -193,7 +202,7 @@ public class SplitZhihu1 {
 						break;
 					}
 					
-					if (line.matches("展开其他 [0-9]* 条回复"))
+					if (line.matches(".* [0-9]* 条回复$"))
 					{
 						break;
 					}
@@ -213,17 +222,28 @@ public class SplitZhihu1 {
 			}
 		}
 
+		//finally process
+		if (c.User!=null)
+		{
+			if (comment.User!=null)
+			{
+				c.comments.add(comment);
+			}
+			question.chapter.add(c);
+		}
+		
+		
 		FileOutputStream fos = new FileOutputStream(filePath + "X.md");
 
 		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
 
 			w.write(question.Title);
 			w.write("\n");
-			for (int i = 0; i < question.chapter.size() - 1; i++) {
+			for (int i = 0; i < question.chapter.size()  ; i++) {
 				Chapter cc = question.chapter.get(i);
 				if (cc.User == null)
 					continue;
-				
+				log(i+" user="+cc.User);
 				w.write("\n### " + cc.User);
 				w.write("\n");
 				String body = cc.Body;
@@ -237,7 +257,7 @@ public class SplitZhihu1 {
 
 				body = body.replaceAll("[0-9]* 条评论", "");
 				w.write(body);
-				
+				log(i+","+c.User+"-----------" );
 				for(int ic = 0; ic<cc.comments.size();ic++)
 				{
 					Comment cm = cc.comments.get(ic);
@@ -249,6 +269,7 @@ public class SplitZhihu1 {
 				}
 
 			}
+			w.close();
 		}
 
 	}
