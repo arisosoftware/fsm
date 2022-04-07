@@ -40,6 +40,7 @@ public class History {
 	    return source;
 	}
 	
+	public int popCount =0;
 	public void addHistory(String line) {
 
 	//	System.out.println("#" + historyCount + ">>" + line + "<<");
@@ -49,8 +50,15 @@ public class History {
 		if (historyCount > 3000) {
 			historyCount--;
 			String pop = history.pop();
+			popCount++;
 		//	System.out.println("#Pop" + pop);
 		}
+	}
+	
+	public String GetIndex(int index)
+	{
+	    
+		return history.get(index-popCount);
 	}
 
 	public String GetLast(int index) {
@@ -128,6 +136,8 @@ public class History {
 
 	}
 	
+ 
+	
 	public String GetLastMatchInRange(String[] matchs, int range,char equalsType)
 	{
 		int foundIdx= LookupInRange(matchs,range,equalsType);
@@ -172,7 +182,7 @@ public class History {
 		int position = LastLineNum;
 		if (LastLineNum> historyCount)
 		{
-			position= position - (position - historyCount);
+			position= position - popCount;
 		}
 	 
 		int beginLine = historyCount - 2- skipIdx;

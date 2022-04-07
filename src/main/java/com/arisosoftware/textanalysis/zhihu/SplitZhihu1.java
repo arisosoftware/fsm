@@ -54,7 +54,8 @@ public class SplitZhihu1 {
 		ZAnswer curAnswer = new ZAnswer();
 		Comment comment = new Comment();
 		Scanner s = new Scanner(new File(filePath));
-		String LastStateLine = null;
+ 
+		int LastStateLineIdx =0;
 		int lastAnswerIdx =0;
 		question.chapter.add(curAnswer);
 
@@ -66,17 +67,22 @@ public class SplitZhihu1 {
 
 				history.addHistory(line);
 
-				if (lineNo == 7735) {
+				if (lineNo == 6676) {
 					System.out.println(line);
 				}
 
-				if (line.equals("​ 举报")) {
+				if (line.equals("​ 举报") && StateId != 6 ) {
 					String line1 = history.GetLast(1);
 					String line2 = history.GetLast(2);
-					String line3 = history.GetLast(3);
+
 					// ​回复 回复
-					if (line1.equals("​踩") && line2.equals("​回复") && line3.equals("​赞")) {
+					if (line1.equals("​踩") && line2.equals("​回复")) {
+			 
+						comment = new Comment();
+						comment.User = history.GetIndex(LastStateLineIdx);
+						LastStateLineIdx=LastStateLineIdx+2;
 						StateId = 6;
+						curAnswer.comments.add(comment);
 					}
 
 				}
@@ -92,7 +98,8 @@ public class SplitZhihu1 {
 							question.Title = xl;
 							StateId = 1;
 							log(xl);
-							LastStateLine = xl;
+							LastStateLineIdx = lineNo;
+							
 						}
 
 					}
@@ -101,7 +108,7 @@ public class SplitZhihu1 {
 				case 1:
 					// on enter
 					if (line.equals("关注者")) {
-						String xl = history.GetLastUntilMatch(LastStateLine).toString();
+						String xl = history.GetLastUntilLastPositionNum(LastStateLineIdx).toString();
 
 						question.Body = xl;
 						log(xl);
@@ -120,7 +127,7 @@ public class SplitZhihu1 {
 						curAnswer.User = xl;
 						log(xl);
 						StateId = 3;
-						LastStateLine = line;
+						LastStateLineIdx = lineNo;
 					}
 
 					if (line.equals("​切换为时间排序")) {
@@ -151,7 +158,7 @@ public class SplitZhihu1 {
 
 						if (line1.equals("​收藏") && line2.equals("​分享")) {
 							lastAnswerIdx = lineNo;
-							String sb = history.GetLastUntilMatch(LastStateLine).toString();
+							String sb = history.GetLastUntilLastPositionNum(LastStateLineIdx).toString();
 
 							sb = StringUtils.replace(sb, "", "");
 
@@ -164,10 +171,11 @@ public class SplitZhihu1 {
 
 							StateId = 2;
 							// log(sb);
-							LastStateLine = line;
-
-							String xl = history.GetLastMatchInRange(new String[] { "发布于", "编辑于", }, 11, '^');
-							LastStateLine = xl;
+							LastStateLineIdx = lineNo;
+							int idx2=
+							history.LookupInRange(new String[] { "发布于", "编辑于", }, 11, '^');
+							if (idx2>0)
+								LastStateLineIdx = idx2;
 
 						}
 
@@ -182,26 +190,26 @@ public class SplitZhihu1 {
 					if (line1.matches("[0-9]+ 条评论") && line2.startsWith("​切换为")) {
 						comment = new Comment();
 						comment.User = line;
-						LastStateLine = line;
+						LastStateLineIdx = lineNo;
 						StateId = 5;
 						curAnswer.comments.add(comment);
 					}
 
 					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...")) {
-						LastStateLine = line;
+						LastStateLineIdx = lineNo;
 						StateId = 2;
 					}
 					break;
 				}
 
 				case 5: {
-					LastStateLine = line;
+					LastStateLineIdx = lineNo;
 					StateId = 6;
 					break;
 				}
 				case 6: {
 					if (line.equals("​ 举报")) {
-						String xl = history.GetLastUntilMatch(LastStateLine, 2).toString();
+						String xl = history.GetLastUntilLastPositionNum(LastStateLineIdx, 2).toString();
 
 						comment.Body = xl;
 
@@ -212,19 +220,15 @@ public class SplitZhihu1 {
 				}
 
 				case 7: {
-					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...")) {
-						LastStateLine = line;
+					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...") || line.matches(".* [0-9]* 条回复$")) {
+						LastStateLineIdx = lineNo;
 						StateId = 2;
 						break;
 					}
-
-					if (line.matches(".* [0-9]* 条回复$")) {
-						StateId = 2;
-						break;
-					} else {
+					else {
 						comment = new Comment();
 						comment.User = line;
-						LastStateLine = line;
+						LastStateLineIdx = lineNo;
 						StateId = 5;
 						curAnswer.comments.add(comment);
 						break;
