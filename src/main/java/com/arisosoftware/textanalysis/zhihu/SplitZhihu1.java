@@ -134,16 +134,16 @@ public class SplitZhihu1 {
 						StateId = 4;
 					}
 
-					if (line.equals("​喜欢")) {
-
-						String line1 = history.GetLast(1);
-						String line2 = history.GetLast(2);
-
-						if (line1.equals("​收藏") && line2.equals("​分享")) {
-							
-						}
-
-					}
+//					if (line.equals("​喜欢")) {
+//
+//						String line1 = history.GetLast(1);
+//						String line2 = history.GetLast(2);
+//
+//						if (line1.equals("​收藏") && line2.equals("​分享")) {
+//							
+//						}
+//
+//					}
 					break;
 				case 3:
 					// on enter
@@ -157,6 +157,15 @@ public class SplitZhihu1 {
 						String line2 = history.GetLast(2);
 
 						if (line1.equals("​收藏") && line2.equals("​分享")) {
+							
+							if (curAnswer.Body!=null)
+							{ 
+								curAnswer = new ZAnswer();
+								question.chapter.add(curAnswer);
+								curAnswer.User = history.GetIndex( LastStateLineIdx);;
+								LastStateLineIdx++;
+							}
+							
 							lastAnswerIdx = lineNo;
 							String sb = history.GetLastUntilLastPositionNum(LastStateLineIdx).toString();
 
@@ -167,6 +176,7 @@ public class SplitZhihu1 {
 											"​展开阅读全文", "​收藏", "​收起评论", },
 									new String[] { "", "", "", "", "", "", "", "", });
 
+							
 							curAnswer.Body = sb;
 
 							StateId = 2;
@@ -215,9 +225,35 @@ public class SplitZhihu1 {
 
 						StateId = 7;
 					}
+					if (line.equals("发布")) {
+						String line1 = history.GetLast(2);
+						String line2 = history.GetLast(1);
+						if (line1.equals("") && line2.equals(""))
+						{
+							StateId = 3;
+							LastStateLineIdx = lineNo+1;
+						}
+						
+					}
+					
+					//
 
 					break;
 				}
+				
+//				case 601:
+//				{
+//					if (line.equals("​喜欢")) {
+//
+//						String line1 = history.GetLast(1);
+//						String line2 = history.GetLast(2);
+//
+//						if (line1.equals("​收藏") && line2.equals("​分享")) {
+//							
+//						}
+//					}
+//					break;
+//				}
 
 				case 7: {
 					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...") || line.matches(".* [0-9]* 条回复$")) {
