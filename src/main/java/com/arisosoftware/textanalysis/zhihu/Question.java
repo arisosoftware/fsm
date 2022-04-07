@@ -7,6 +7,6 @@ public class Question {
 	 public String Body;
  	 public String User;
  	 
- 	 public ArrayList<Chapter> chapter = new ArrayList<Chapter>();
+ 	 public ArrayList<ZAnswer> chapter = new ArrayList<ZAnswer>();
  	 
 }

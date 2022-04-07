@@ -2,7 +2,7 @@ package com.arisosoftware.textanalysis.zhihu;
 
 import java.util.ArrayList;
 
-public class Chapter {
+public class ZAnswer {
 	 
 	 public String Body;
  	 public String User;

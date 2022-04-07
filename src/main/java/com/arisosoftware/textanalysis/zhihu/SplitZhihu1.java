@@ -41,11 +41,9 @@ public class SplitZhihu1 {
 	}
 
 	public static void main(String[] args) throws Exception {
-		
-	
+
 		String filePath = "/tmp/a2";
-		if (args.length>1)
-		{
+		if (args.length > 1) {
 			filePath = args[0];
 		}
 		int StateId = 0;
@@ -53,11 +51,14 @@ public class SplitZhihu1 {
 		History history = new History();
 		Question question = new Question();
 
-		Chapter c = new Chapter();
+		ZAnswer curAnswer = new ZAnswer();
 		Comment comment = new Comment();
 		Scanner s = new Scanner(new File(filePath));
 		String LastStateLine = null;
-		int lineNo=0;
+		int lastAnswerIdx =0;
+		question.chapter.add(curAnswer);
+
+		int lineNo = 0;
 		while (s.hasNextLine()) {
 			lineNo++;
 			String line = s.nextLine().trim();
@@ -65,13 +66,21 @@ public class SplitZhihu1 {
 
 				history.addHistory(line);
 
-				if (lineNo==706)
-				{
+				if (lineNo == 7735) {
 					System.out.println(line);
 				}
-					
-				
-				
+
+				if (line.equals("​ 举报")) {
+					String line1 = history.GetLast(1);
+					String line2 = history.GetLast(2);
+					String line3 = history.GetLast(3);
+					// ​回复 回复
+					if (line1.equals("​踩") && line2.equals("​回复") && line3.equals("​赞")) {
+						StateId = 6;
+					}
+
+				}
+
 				switch (StateId) {
 				case 0:
 
@@ -105,9 +114,10 @@ public class SplitZhihu1 {
 					// on enter
 					if (line.endsWith("人赞同了该回答")) {
 						String xl = history.FindFirstSameSubseqString(15);
-						question.chapter.add(c);
-						c = new Chapter();
-						c.User = xl;
+
+						curAnswer = new ZAnswer();
+						question.chapter.add(curAnswer);
+						curAnswer.User = xl;
 						log(xl);
 						StateId = 3;
 						LastStateLine = line;
@@ -115,6 +125,17 @@ public class SplitZhihu1 {
 
 					if (line.equals("​切换为时间排序")) {
 						StateId = 4;
+					}
+
+					if (line.equals("​喜欢")) {
+
+						String line1 = history.GetLast(1);
+						String line2 = history.GetLast(2);
+
+						if (line1.equals("​收藏") && line2.equals("​分享")) {
+							
+						}
+
 					}
 					break;
 				case 3:
@@ -129,6 +150,7 @@ public class SplitZhihu1 {
 						String line2 = history.GetLast(2);
 
 						if (line1.equals("​收藏") && line2.equals("​分享")) {
+							lastAnswerIdx = lineNo;
 							String sb = history.GetLastUntilMatch(LastStateLine).toString();
 
 							sb = StringUtils.replace(sb, "", "");
@@ -138,16 +160,15 @@ public class SplitZhihu1 {
 											"​展开阅读全文", "​收藏", "​收起评论", },
 									new String[] { "", "", "", "", "", "", "", "", });
 
-							c.Body = sb;
+							curAnswer.Body = sb;
 
 							StateId = 2;
-						//	log(sb);
+							// log(sb);
 							LastStateLine = line;
-						
 
 							String xl = history.GetLastMatchInRange(new String[] { "发布于", "编辑于", }, 11, '^');
 							LastStateLine = xl;
-							
+
 						}
 
 //System.exit(1);
@@ -163,12 +184,10 @@ public class SplitZhihu1 {
 						comment.User = line;
 						LastStateLine = line;
 						StateId = 5;
-						c.comments.add(comment);
+						curAnswer.comments.add(comment);
 					}
 
-					if (line.matches("[0-9]*下一页")
-							|| line.equals("写下你的评论...")
-							) {
+					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...")) {
 						LastStateLine = line;
 						StateId = 2;
 					}
@@ -182,68 +201,60 @@ public class SplitZhihu1 {
 				}
 				case 6: {
 					if (line.equals("​ 举报")) {
-						String xl = history.GetLastUntilMatch(LastStateLine,2).toString();
+						String xl = history.GetLastUntilMatch(LastStateLine, 2).toString();
 
 						comment.Body = xl;
-						 
+
 						StateId = 7;
 					}
-					
-					
+
 					break;
 				}
-				
+
 				case 7: {
-					if (line.matches("[0-9]*下一页")
-							|| line.equals("写下你的评论...")
-							) {
+					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...")) {
 						LastStateLine = line;
 						StateId = 2;
 						break;
 					}
-					
-					if (line.matches(".* [0-9]* 条回复$"))
-					{
+
+					if (line.matches(".* [0-9]* 条回复$")) {
+						StateId = 2;
 						break;
-					}
-					else
-					{
+					} else {
 						comment = new Comment();
 						comment.User = line;
 						LastStateLine = line;
-						StateId = 5;	c.comments.add(comment);
+						StateId = 5;
+						curAnswer.comments.add(comment);
 						break;
 					}
-				 
+
 				}
-				
-				
+
 				}
 			}
 		}
 
-		//finally process
-		if (c.User!=null)
-		{
-			if (comment.User!=null)
-			{
-				c.comments.add(comment);
+		// finally process
+		if (curAnswer.User != null) {
+			if (comment.User != null) {
+				curAnswer.comments.add(comment);
 			}
-			question.chapter.add(c);
+			question.chapter.add(curAnswer);
 		}
-		
-		
+
 		FileOutputStream fos = new FileOutputStream(filePath + "X.md");
 
 		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
 
 			w.write(question.Title);
 			w.write("\n");
-			for (int i = 0; i < question.chapter.size()  ; i++) {
-				Chapter cc = question.chapter.get(i);
+			for (int i = 0; i < question.chapter.size(); i++) {
+				ZAnswer cc = question.chapter.get(i);
 				if (cc.User == null)
 					continue;
-				log(i+" user="+cc.User);
+				log(i + " user=" + cc.User);
 				w.write("\n### " + cc.User);
 				w.write("\n");
 				String body = cc.Body;
@@ -257,15 +268,13 @@ public class SplitZhihu1 {
 
 				body = body.replaceAll("[0-9]* 条评论", "");
 				w.write(body);
-				log(i+","+c.User+"-----------" );
-				for(int ic = 0; ic<cc.comments.size();ic++)
-				{
+				log(i + "," + curAnswer.User + "-----------");
+				for (int ic = 0; ic < cc.comments.size(); ic++) {
 					Comment cm = cc.comments.get(ic);
-					if (cm.User==null)
+					if (cm.User == null)
 						continue;
-					w.write("\t" + 
-						StringUtils.rightPad(cm.User, 15,"　")+":\t"+cm.Body );
-				 
+					w.write("\t" + StringUtils.rightPad(cm.User, 15, "　") + ":\t" + cm.Body);
+
 				}
 
 			}

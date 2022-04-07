@@ -163,6 +163,29 @@ public class History {
 		return sb;
 	}
 	
+	
+	public StringBuilder GetLastUntilLastPositionNum(int LastLineNum) {
+		return GetLastUntilLastPositionNum(LastLineNum,0);
+	}
+	public StringBuilder GetLastUntilLastPositionNum(int LastLineNum, int skipIdx) {
+		StringBuilder sb = new StringBuilder();
+		int position = LastLineNum;
+		if (LastLineNum> historyCount)
+		{
+			position= position - (position - historyCount);
+		}
+	 
+		int beginLine = historyCount - 2- skipIdx;
+		for (int x = position; x < beginLine; x++) {
+			sb.append(history.get(x));
+			sb.append("\n");
+		}
+
+		return sb;
+	}
+	
+	
+	
 	public String GetLastUntilMatch__old1(String match) {
 		StringBuilder sb = new StringBuilder();
 		int i = historyCount - 2;
