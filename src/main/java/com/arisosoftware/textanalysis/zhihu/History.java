@@ -47,7 +47,7 @@ public class History {
 
 		history.add(line);
 		historyCount++;
-		if (historyCount > 3000) {
+		if (historyCount > 9999) {
 			historyCount--;
 			String pop = history.pop();
 			popCount++;

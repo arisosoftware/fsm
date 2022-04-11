@@ -39,13 +39,16 @@ public class SplitZhihu1 {
 	static String Preprocess(String input) {
 		return input;
 	}
-
 	public static void main(String[] args) throws Exception {
-
-		String filePath = "/tmp/a2";
-		if (args.length > 1) {
-			filePath = args[0];
+		for(int i =0;i<args.length;i++)
+		{
+			split(args[i]);
 		}
+	}
+	
+	public static void split(String filePath) throws Exception {
+
+	 
 		int StateId = 0;
 
 		History history = new History();
