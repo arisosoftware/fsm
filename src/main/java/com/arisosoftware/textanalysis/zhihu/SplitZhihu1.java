@@ -45,6 +45,33 @@ public class SplitZhihu1 {
 			split(args[i]);
 		}
 	}
+//	
+//	static String FilterOutInvisibleChar(String myString)
+//	{
+//		StringBuilder newString = new StringBuilder(myString.length());
+//		for (int offset = 0; offset < myString.length();)
+//		{
+//		    int codePoint = myString.codePointAt(offset);
+//		    offset += Character.charCount(codePoint);
+//
+//		    // Replace invisible control characters and unused code points
+//		    switch (Character.getType(codePoint))
+//		    {
+//		        case Character.CONTROL:     // \p{Cc}
+//		        case Character.FORMAT:      // \p{Cf}
+//		        case Character.PRIVATE_USE: // \p{Co}
+//		        case Character.SURROGATE:   // \p{Cs}
+//		        case Character.UNASSIGNED:  // \p{Cn}
+//		            break;
+//		        default:
+//		            newString.append(Character.toChars(codePoint));
+//		            break;
+//		    }
+//		    
+//		}
+//		
+//		return newString.toString();
+//	}
 	
 	public static void split(String filePath) throws Exception {
 
@@ -66,6 +93,7 @@ public class SplitZhihu1 {
 		while (s.hasNextLine()) {
 			lineNo++;
 			String line = s.nextLine().trim();
+			
 			if (line != null) {
 
 				history.addHistory(line);
@@ -280,14 +308,14 @@ public class SplitZhihu1 {
 		}
 
 		// finally process
-		if (curAnswer.User != null) {
-			if (comment.User != null) {
-				curAnswer.comments.add(comment);
-			}
-			question.chapter.add(curAnswer);
-		}
-
-		FileOutputStream fos = new FileOutputStream(filePath + "X.md");
+//		if (curAnswer.User != null) {
+//			if (comment.User != null) {
+//				curAnswer.comments.add(comment);
+//			}
+//			question.chapter.add(curAnswer);
+//		}
+//
+		FileOutputStream fos = new FileOutputStream(filePath + ".md");
 
 		try (Writer w = new OutputStreamWriter(fos, "UTF-8")) {
 
@@ -301,9 +329,13 @@ public class SplitZhihu1 {
 				w.write("\n### " + cc.User);
 				w.write("\n");
 				String body = cc.Body;
+				body = body.replaceAll("\\u200B", "");
+				
 				body = body.replaceAll("\n\n", "\n");
 				body = body.replaceAll("\n\n", "\n");
 				body = body.replaceAll("\n\n", "\n");
+
+				body = body.replaceAll("[【】　「」‘’]", "\"");
 
 				body = body.replaceAll("^已赞同 [0-9]*", "");
 				body = body.replaceAll("赞同 [0-9]*", "");
@@ -316,7 +348,8 @@ public class SplitZhihu1 {
 					Comment cm = cc.comments.get(ic);
 					if (cm.User == null)
 						continue;
-					w.write("\t" + StringUtils.rightPad(cm.User, 15, "　") + ":\t" + cm.Body);
+					String cmComment = cm.Body.replaceAll("\u200B", "");
+					w.write("\t" + StringUtils.rightPad(cm.User, 5, "　") + ":\t" + cm.Body);
 
 				}
 
