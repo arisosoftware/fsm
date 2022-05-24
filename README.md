@@ -38,3 +38,11 @@ https://www.shubaow.net/192_192831/41174616.html
 ​回复  end of comment copy and remove last line
 
 
+
+今天用转换功能。
+iconv -c --verbose  -f gbk -t utf-8 1书剑恩仇录（新修版）.txt -o 1.txt
+
+find -name "*.txt" -exec iconv -c --verbose  -f gbk -t utf-8 {}  -o {}.md \;
+
+
+regex: [，：、‘“？”。　…] -> \n

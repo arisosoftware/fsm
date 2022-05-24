@@ -42,7 +42,12 @@ public class SplitZhihu1 {
 	public static void main(String[] args) throws Exception {
 		for(int i =0;i<args.length;i++)
 		{
-			split(args[i]);
+			try {
+				split(args[i]);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 //	
@@ -75,6 +80,9 @@ public class SplitZhihu1 {
 	
 	public static void split(String filePath) throws Exception {
 
+		if (filePath.endsWith("md"))
+				return;
+		
 	 
 		int StateId = 0;
 
@@ -326,17 +334,30 @@ public class SplitZhihu1 {
 				if (cc.User == null)
 					continue;
 				log(i + " user=" + cc.User);
-				w.write("\n### " + cc.User);
+				w.write("\n\n### " + cc.User);
 				w.write("\n");
 				String body = cc.Body;
-				body = body.replaceAll("\\u200B", "");
+				//body = body.replaceAll("\n\n", "\n");
+				body = body.replace("\u200B", "");
+				body = body.replaceAll("\n+", "\n");
+		
+				body = body.replaceAll("[　\t]", "");
+				body = body.replace("[","\"");
+				body = body.replace("]","\"");
+				body = body.replace("　","");
+				body = body.replace("\t","");
+				body = body.replace("“","「");
+				body = body.replace("”","」");
+				body = body.replace("【","「");
+				body = body.replace("】”","」");
+				body = body.replace("‘","");
+				body = body.replace("’","");
+				body = body.replaceAll("\n$", "");
+
+				body = body.replaceAll("[　\t]", "");
+
 				
-				body = body.replaceAll("\n\n", "\n");
-				body = body.replaceAll("\n\n", "\n");
-				body = body.replaceAll("\n\n", "\n");
-
-				body = body.replaceAll("[【】　「」‘’]", "\"");
-
+				
 				body = body.replaceAll("^已赞同 [0-9]*", "");
 				body = body.replaceAll("赞同 [0-9]*", "");
 				body = body.replaceAll("展开阅读全文", "");
@@ -348,9 +369,16 @@ public class SplitZhihu1 {
 					Comment cm = cc.comments.get(ic);
 					if (cm.User == null)
 						continue;
-					String cmComment = cm.Body.replaceAll("\u200B", "");
-					w.write("\t" + StringUtils.rightPad(cm.User, 5, "　") + ":\t" + cm.Body);
-
+					String cmComment = cm.Body;
+					if (cmComment!=null)
+					{
+						cmComment = cmComment.replaceAll("\u200B", "");
+						cmComment = cmComment.replaceAll("\n+", "\n");
+						cmComment = cmComment.replaceAll("\n$", "");
+						cmComment = cmComment.replaceAll("\n", "\n\t\t");
+					}
+					w.write( "\n\t"+StringUtils.rightPad(cm.User, 5, "　") + ":\t" + cmComment);
+					//w.write( "\n\t"+ cm.User + ":\t" + cmComment);
 				}
 
 			}
