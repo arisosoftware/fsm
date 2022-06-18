@@ -104,9 +104,11 @@ public class SplitZhihu1 {
 			
 			if (line != null) {
 
+				System.out.println("#"+lineNo+"|"+StateId+"|"+line);
+				
 				history.addHistory(line);
 
-				if (lineNo == 6676) {
+				if (lineNo == 69) {
 					System.out.println(line);
 				}
 
@@ -160,7 +162,10 @@ public class SplitZhihu1 {
 					// on enter
 					if (line.endsWith("人赞同了该回答")) {
 						String xl = history.FindFirstSameSubseqString(15);
-
+						if (xl==null)
+						{
+							xl = history.GetLast(2);
+						}
 						curAnswer = new ZAnswer();
 						question.chapter.add(curAnswer);
 						curAnswer.User = xl;
@@ -329,6 +334,8 @@ public class SplitZhihu1 {
 
 			w.write(question.Title);
 			w.write("\n");
+			w.write(question.Body);
+			w.write("\n");
 			for (int i = 0; i < question.chapter.size(); i++) {
 				ZAnswer cc = question.chapter.get(i);
 				if (cc.User == null)
@@ -349,7 +356,9 @@ public class SplitZhihu1 {
 				body = body.replace("“","「");
 				body = body.replace("”","」");
 				body = body.replace("【","「");
-				body = body.replace("】”","」");
+				body = body.replace("】","」");
+				
+				
 				body = body.replace("‘","");
 				body = body.replace("’","");
 				body = body.replaceAll("\n$", "");
