@@ -82,7 +82,6 @@ public class SplitZhihu1 {
 
 		if (filePath.endsWith("md"))
 				return;
-		
 	 
 		int StateId = 0;
 
@@ -165,6 +164,10 @@ public class SplitZhihu1 {
 						if (xl==null)
 						{
 							xl = history.GetLast(2);
+							if (xl.length()<2)
+							{
+								xl = history.GetLast(3);
+							}
 						}
 						curAnswer = new ZAnswer();
 						question.chapter.add(curAnswer);
