@@ -46,3 +46,28 @@ find -name "*.txt" -exec iconv -c --verbose  -f gbk -t utf-8 {}  -o {}.md \;
 
 
 regex: [，：、‘“？”。　…] -> \n
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+今日想法：
+自己搞一个爬虫系统
+http://cec.blog.caixin.com/archives/208274
+https://www.lishiyushehui.cn/
