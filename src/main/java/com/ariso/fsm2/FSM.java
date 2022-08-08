@@ -43,7 +43,7 @@ public class FSM<T> {
 		}	
 	}
 	
-	public void restart()
+	public void reset()
 	{
 		this.CurrentCode = this.InitCode;
 	}
