@@ -130,7 +130,7 @@ public class SplitZhihu1 {
 
 		int lineNo = 0;
 		while (s.hasNextLine()) {
-		 
+
 			String line = s.nextLine();
 			line = PreFilter(line);
 
@@ -144,7 +144,7 @@ public class SplitZhihu1 {
 					// DebugStringInHEX(line);
 					// DebugStringInHEX(Flag32);
 					//
-				//	System.out.println();
+					// System.out.println();
 				}
 
 				if (line.equals("​ 举报") && StateId != 6) {
@@ -205,9 +205,7 @@ public class SplitZhihu1 {
 							int idx2 = history.LookupInRange("默认排序", 20);
 							if (idx2 > 0) {
 								xl = history.GetIndex(idx2 + 1);
-							}
-							else
-							{
+							} else {
 								xl = history.GetLast(2);
 								if (xl.length() < 2) {
 									xl = history.GetLast(3);
@@ -229,6 +227,11 @@ public class SplitZhihu1 {
 						LastStateLineIdx = history.LineNo;
 					}
 
+					if (line.equals("​​赞同​")) {
+						StateId = 3;
+					}
+					
+					
 					if (line.equals("​切换为时间排序")) {
 						StateId = 4;
 					}
@@ -238,6 +241,61 @@ public class SplitZhihu1 {
 						StateId = 41;
 					}
 
+
+					String P231 = "发布于".replace("\u200b", "");
+					String P232 = "编辑于".replace("\u200b", "");
+					
+					String F233 = "喜欢".replace("\u200b", "");
+					String F234 = "收藏".replace("\u200b", "");
+					String F235 = "​分享".replace("\u200b", "");
+
+//					if (true) {
+//						if (line.equals(F233)) {
+//							String line1 = history.GetLast(1);
+//							String line2 = history.GetLast(2);
+//								
+//							if ((line1.equals(F234) && line2.equals(F235))) {
+//								int range =  history.LineNo - LastStateLineIdx;
+//								int idx1 = history.LookupInRange("默认排序", range);
+//								int idx2=0,idx3=0;
+//								if (idx1>0)
+//								{
+//									String xl = history.GetLast(idx1+1);
+//									
+//								}
+//								
+//								
+//								if (idx1<0)
+//								{
+//									idx2 = history.LookupInRange("按时间排序", range);
+//									if (idx2<0)
+//									{
+//										idx3 = history.LookupInRange("分享", range);
+//									}
+//								}
+//								if (idx1>0)
+//								{
+//								
+//								}
+//								 
+//								if (idx1<0)
+//								{
+//									
+//								}
+//								
+//							 
+//								
+//							}
+//						}
+//								
+//						if (line.startsWith(P231) || line.startsWith(P232))
+//						{
+//							
+//							
+//						}
+ 
+
+					
 					break;
 
 				case 41: {
@@ -246,7 +304,7 @@ public class SplitZhihu1 {
 					String L2 = history.GetLast(2);
 					String L3 = history.GetLast(3);
 
-					if ((line.equals("​回复") || (line.equals("​热评"))) ) {
+					if ((line.equals("​回复") || (line.equals("​热评")))) {
 						comment = new Comment();
 
 						comment.User = line;
@@ -254,61 +312,47 @@ public class SplitZhihu1 {
 						StateId = 5;
 						curAnswer.comments.add(comment);
 					}
-					if (L1.startsWith("IP 属地"))
-					{
-						if ((L3.matches("[0-9][0-9]-[0-9][0-9]") )
-							||L3.matches("[0-9]+ 小时前") 
-							||(L3.matches("[0-9]+ 分钟前") )) 
-						{
-									comment = new Comment();
-									int range = history.LineNo - LastStateLineIdx;
-									int idx3 = 2;
-									int idx2 = history.LookupInRange("回复",range);
-									if (idx2>0)
-									{
-										String userName = history.GetIndex(idx2+idx3);
-										if (userName.matches("查看全部 [0-9]+ 条回复"))
-										{
-											idx3++;
-											userName = history.GetIndex(idx2+idx3);
-										}
-										
-										comment.User = userName;
-										comment.Body = history.GetLastUntilLastPositionNum(idx2+idx3,2).toString();
-									}
-									else
-									{
-										String userName = history.GetLast(5);
-										comment.User = userName;
-										comment.Body = history.GetLast(4);	
-									}
-									
-									LastStateLineIdx = history.LineNo;
-									StateId = 41;
-									curAnswer.comments.add(comment);
-									
-									System.out.println(" >> ");
+					if (L1.startsWith("IP 属地")) {
+						if ((L3.matches("[0-9][0-9]-[0-9][0-9]")) || L3.matches("[0-9]+ 小时前")
+								|| (L3.matches("[0-9]+ 分钟前"))) {
+							comment = new Comment();
+							int range = history.LineNo - LastStateLineIdx;
+							int idx3 = 2;
+							int idx2 = history.LookupInRange("回复", range);
+							if (idx2 > 0) {
+								String userName = history.GetIndex(idx2 + idx3);
+								if (userName.matches("查看全部 [0-9]+ 条回复")) {
+									idx3++;
+									userName = history.GetIndex(idx2 + idx3);
 								}
-								
+
+								comment.User = userName;
+								comment.Body = history.GetLastUntilLastPositionNum(idx2 + idx3, 2).toString();
+							} else {
+								String userName = history.GetLast(5);
+								comment.User = userName;
+								comment.Body = history.GetLast(4);
+							}
+
+							LastStateLineIdx = history.LineNo;
+							StateId = 41;
+							curAnswer.comments.add(comment);
+
+							System.out.println(" >> ");
+						}
+
 					}
-				
-										
-					
 
 					if (line.matches("[0-9]*下一页") || line.equals("写下你的评论...")) {
 						LastStateLineIdx = history.LineNo;
 						StateId = 2;
 					}
-					
-					if (line.endsWith("人关注了作者") 
-						||line.endsWith("人赞同了该回答")
-						||line.equals("更多回答")	
-							) {
+
+					if (line.endsWith("人关注了作者") || line.endsWith("人赞同了该回答") || line.equals("更多回答")) {
 						LastStateLineIdx = history.LineNo;
 						StateId = 2;
 					}
-			  
-					//
+
 					
 					break;
 				}
@@ -341,20 +385,20 @@ public class SplitZhihu1 {
 							lastAnswerIdx = history.LineNo;
 							String sb = history.GetLastUntilLastPositionNum(LastStateLineIdx).toString();
 
-							sb = MyReplaceAllEach(
-									sb, new String[] { "真诚赞赏，手留余香", "还没有人赞赏，快来当第一个赞赏的人吧！", "添加评论", "赞赏", "​分享",
-											"​展开阅读全文", "​收藏", "收起评论", "分享" },
-									new String[] { "", "", "", "", "", "", "", "","", });
+							sb = MyReplaceAllEach(sb,
+									new String[] { "真诚赞赏，手留余香", "还没有人赞赏，快来当第一个赞赏的人吧！", "添加评论", "赞赏", "​分享", "​展开阅读全文",
+											"​收藏", "收起评论", "分享" },
+									new String[] { "", "", "", "", "", "", "", "", "", });
 
 							curAnswer.Body = sb;
 
 							StateId = 2;
 							// log(sb);
 							LastStateLineIdx = history.LineNo;
-							String P31 ="发布于".replace("\u200b", "");
+							String P31 = "发布于".replace("\u200b", "");
 							String P32 = "编辑于".replace("\u200b", "");
-							
-							int idx2 = history.LookupInRange(new String[] { P31,P32 , }, 11, '^');
+
+							int idx2 = history.LookupInRange(new String[] { P31, P32, }, 11, '^');
 							if (idx2 > 0) {
 								LastStateLineIdx = idx2;
 							}
