@@ -7,9 +7,10 @@ import java.util.Set;
 public class History {
 	LinkedList<String> history = new LinkedList<String>();
 	int historyCount;
-
+	int LineNo = 0;
 	public void clean()
 	{
+		LineNo =0;
 		historyCount=0;
 		history = new LinkedList<String>(); 
 	}
@@ -41,10 +42,10 @@ public class History {
 	}
 	
 	public int popCount =0;
-	public void addHistory(String line) {
-
-	//	System.out.println("#" + historyCount + ">>" + line + "<<");
-
+	public void addHistory(String line , int StateId) {
+		LineNo++;
+		System.out.println("#" + LineNo + "|" + StateId + "|" + line+ "|");
+ 
 		history.add(line);
 		historyCount++;
 		if (historyCount > 9999) {
@@ -77,6 +78,7 @@ public class History {
 		if (endLine < 0) {
 			endLine = 0;
 		}
+		
 		int theline = -1;
 		for (; i > endLine; i--) {
 			String data = history.get(i);

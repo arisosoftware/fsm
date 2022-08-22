@@ -19,6 +19,8 @@
 
 	<dependencyManagement>
 		<dependencies>
+
+
 			<dependency>
 				<groupId>io.vertx</groupId>
 				<artifactId>vertx-stack-depchain</artifactId>
@@ -30,6 +32,24 @@
 	</dependencyManagement>
 
 	<dependencies>
+
+
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-jaeger</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty</artifactId>
+			<version>1.35.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.1.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
@@ -68,13 +88,13 @@
 		</dependency>
 
 
-    <dependency>
-	    <groupId>com.alibaba</groupId>
-	    <artifactId>fastjson</artifactId>
-	    <version>1.2.7</version>
-	</dependency>
-	
-	
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.7</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
