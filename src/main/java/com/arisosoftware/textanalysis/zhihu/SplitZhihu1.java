@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import opencc.*;
 import org.apache.commons.lang3.StringUtils;
 
 public class SplitZhihu1 {

@@ -35,82 +35,114 @@ public class PoemFSM extends FSM<Character> {
 			+ "高阳池送朱二::孟浩然::当昔襄阳雄盛时，山公常醉习家池。池边钓女日相随，妆成照影竞来窥。澄波澹澹芙蓉发，绿岸毵毵杨柳垂。一朝物变人亦非，四面荒凉人径稀。意气豪华何处在，空余草露湿罗衣。此地朝来饯行者，翻向此中牧征马。征马分飞日渐斜，见此空为人所嗟。殷勤为访桃源路，予亦归来松子家。\n"
 			+ "鹦鹉洲送王九之江左::孟浩然::昔登江上黄鹤楼，遥爱江中鹦鹉洲。洲势逶迤遶碧流，鸳鸯鸂鶒满滩头。滩头日落沙碛长，金沙熠熠动飙光。舟人牵锦缆，浣女结罗裳。月明全见芦花白，风起遥闻杜若香，君行采采莫相忘。";
 
-	public enum State {
-		Header(1), HeaderSp(2), Author(3), AuthorSp(4), Poem(5);
+	public Integer State_Header ;
+	public Integer State_HeaderSp ;
+	public Integer State_Author ;
+	public Integer State_AuthorSp ;
+	public Integer State_Poem ;
+	
+	
+	public void InitStateId()
+	{
+		int SeqId=1;
+		State_Header = SeqId++;
+		State_HeaderSp = SeqId++;
+		State_Author = SeqId++;
+		State_AuthorSp = SeqId++;
+		State_Poem = SeqId++;
 
-		private final Integer value;
-
-		private State(int value) {
-			this.value = value;
-		}
-
-		public Integer getValue() {
-			return value;
-		}
-	};
-
+	}
+	
 	public ArrayList<PoemVO> Result = new ArrayList<PoemVO>();
 
 	public PoemVO currentVO = new PoemVO();
 
-	/**
-	 * 
-	 */
 	public PoemFSM() {
-		this.AddHandel(State.Header.value, new FSMNodes<Character>() {
-			@Override
-			public Integer Run(Character input, FSM<Character> fsm) {
-				PoemFSM fff = (PoemFSM) fsm;
-				if (input == ':') {
-					return State.HeaderSp.value;
-				} else {
-					fff.currentVO.Header.append(input);
-				}
+		 InitStateId();
+		this.AddHandel(new FSMNodes<Character>() {
 
-				return State.Header.value;
+			@Override
+			public Integer NodeId() {
+				return State_Header;
 			}
-		});
+			
+			@Override
+			public Integer Run(Character inputStr, FSM<Character> fsm) {
+				PoemFSM fff = (PoemFSM) fsm;
+				if (inputStr == ':') {
+					return State_HeaderSp;
+				} else {
+					fff.currentVO.Header.append(inputStr);
+				}
+				return State_Header;
+			}
 
-		this.AddHandel(State.HeaderSp.value, new FSMNodes<Character>() {
+			
+		});
+ 
+ 
+		this.AddHandel(new FSMNodes<Character>() {
+
 			@Override
 			public Integer Run(Character input, FSM<Character> fsm) {
 				PoemFSM fff = (PoemFSM) fsm;
-				if (input == ':') {
-					return State.HeaderSp.value;
-				} else {
+				if (! (input == ':')) {
 					fff.currentVO.Author.append(input);
-					return State.Author.value;
+					return State_Author;
 				}
+				return State_HeaderSp;
 			}
-		});
 
-		this.AddHandel(State.Author.value, new FSMNodes<Character>() {
+			@Override
+			public Integer NodeId() {
+				return State_HeaderSp;
+			}
+			
+		});
+ 
+		
+		this.AddHandel(new FSMNodes<Character>() {
 			@Override
 			public Integer Run(Character input, FSM<Character> fsm) {
 				PoemFSM fff = (PoemFSM) fsm;
-				if (input == ':') {
-					return State.AuthorSp.value;
-				} else {
+				if (! (input == ':')) {
 					fff.currentVO.Author.append(input);
-					return State.Author.value;
+					return State_Author;
 				}
+				return State_HeaderSp;
 			}
-		});
 
-		this.AddHandel(State.AuthorSp.value, new FSMNodes<Character>() {
+			@Override
+			public Integer NodeId() {
+				return State_Author;
+			}
+			
+		});
+		
+		
+		this.AddHandel(new FSMNodes<Character>() {
 			@Override
 			public Integer Run(Character input, FSM<Character> fsm) {
 				PoemFSM fff = (PoemFSM) fsm;
 				if (input == ':') {
-					return State.AuthorSp.value;
+					return State_AuthorSp;
 				} else {
 					fff.currentVO.Poem.append(input);
-					return State.Poem.value;
+					return State_Poem;
 				}
+			}
+			@Override
+			public Integer NodeId() {
+				return State_AuthorSp;
 			}
 		});
 
-		this.AddHandel(State.Poem.value, new FSMNodes<Character>() {
+		this.AddHandel(new FSMNodes<Character>() {
+			@Override
+			public Integer NodeId() {
+				return State_Poem;
+			}
+			
 			@Override
 			public Integer Run(Character input, FSM<Character> fsm) {
 				PoemFSM fff = (PoemFSM) fsm;
@@ -121,7 +153,7 @@ public class PoemFSM extends FSM<Character> {
 						// fff.currentVO.Print();
 					}
 					fff.currentVO = new PoemVO();
-					return State.Header.value;
+					return State_Header;
 				} else {
 					// filter
 
@@ -145,7 +177,7 @@ public class PoemFSM extends FSM<Character> {
 						fff.currentVO.Poem.append(input);
 					}
 
-					return State.Poem.value;
+					return State_Poem;
 				}
 			}
 		});
@@ -168,15 +200,16 @@ public class PoemFSM extends FSM<Character> {
 	public static void main(String[] args) throws IOException {
 
 		PoemFSM fsm = new PoemFSM();
-
-//	
-//		String bigtxt = testTxt;
-//		
-//		for(int i=0;i<bigtxt.length();i++)
-//		{
-//			Character cc =(Character)bigtxt.charAt(i) ; 
-//			fsm.OnRun(cc );
-//		}
+	 	
+	
+		String bigtxt = testTxt;
+		
+		for(int i=0;i<bigtxt.length();i++)
+		{
+			Character cc =(Character)bigtxt.charAt(i) ; 
+			fsm.OnRun(cc );
+		}
+		System.exit(1);
 //		 
 		String filePath = "/tmp/ZZ/dataset/poetryTang/poetryTang.txt";
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
