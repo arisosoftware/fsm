@@ -1,9 +1,9 @@
 package com.ariso.fsm2;
 
 public interface FSMNodes<T> {
-	public Integer NodeId();
+	public String State();
 	
-	public Integer Run(T input, FSM<T> fsm);
+	public String Run(T input, FSM<T> fsm);
 
 }
 

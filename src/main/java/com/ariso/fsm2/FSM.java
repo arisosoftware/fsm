@@ -3,66 +3,57 @@ package com.ariso.fsm2;
 import java.util.HashMap;
 
 public class FSM<T> {
-	
-	public HashMap<Integer,FSMNodes<T>> handelmap  = new HashMap<Integer,FSMNodes<T>>();
-	
-//	public void AddHandel(Integer code, FSMNodes<T> node)
-//	{
-//		handelmap.put(code, node);
-//		if (CurrentNode==null)
-//		{
-//			CurrentNode = node;
-//			CurrentCode = code;
-//		}
-//		
-//		if (InitCode==0)
-//		{
-//			InitCode = code;
-//		}
-//	}
-	
-	public void AddHandel( FSMNodes<T> node)
-	{
-		Integer code = node.NodeId();
-		
+
+	public HashMap<String, FSMNodes<T>> handelmap = new HashMap<String, FSMNodes<T>>();
+
+	public String CurrentStatus;
+	public FSMNodes<T> CurrentNode = null;
+
+	String InitCode;
+
+	public void AddHandel(FSMNodes<T> node) {
+		String code = node.State();
+
 		handelmap.put(code, node);
-		if (CurrentNode==null)
-		{
+		if (CurrentNode == null) {
 			CurrentNode = node;
-			CurrentCode = code;
+			CurrentStatus = code;
 		}
 
-		if (this.InitCode==0)
-		{
+		if (this.InitCode == null) {
 			this.InitCode = code;
 		}
 	}
-	
-	public Integer CurrentCode = 0;
-	public String CurrentStatus ;
-	public FSMNodes<T> CurrentNode = null;
-	
-	Integer InitCode =0;
-	
-	public void Run(T inputStr)
-	{
-		//	System.out.println("Node#:"+ CurrentCode +" Input"+inputStr.toString());
-		
-		Integer nextNode = CurrentNode.Run(inputStr, this);
 
-		if (handelmap.containsKey(nextNode))
-		{		
-			CurrentCode = nextNode;
-			CurrentNode = handelmap.get(nextNode);			
+	String previousStatus;
+
+	public void Run(T inputStr) {
+		if (previousStatus == null) {
+			previousStatus = CurrentStatus;
+		//	System.out.println("Status:" + previousStatus);
 		}
-		else
-		{			
-			System.err.print("Rtn:"+ nextNode +" no exist, system quit");
-		}	
+
+
+
+		String nextNode = CurrentNode.Run(inputStr, this);
+
+		if (handelmap.containsKey(nextNode)) {
+			CurrentStatus = nextNode;
+			CurrentNode = handelmap.get(nextNode);
+		} else {
+			System.err.print("Rtn:" + nextNode + " no exist, system quit");
+		}
+
+//		if (!previousStatus.equals(CurrentStatus)) {
+//			System.out.println("Change from " + previousStatus + " --> " + CurrentStatus);
+//			previousStatus = CurrentStatus;
+//		}
+
+		System.out.println( CurrentStatus+">>" + inputStr.toString());
+		
 	}
-	
-	public void reset()
-	{
-		this.CurrentCode = this.InitCode;
+
+	public void reset() {
+		this.CurrentStatus = this.InitCode;
 	}
 }
