@@ -49,7 +49,7 @@ public class FSM<T> {
 //			previousStatus = CurrentStatus;
 //		}
 
-		System.out.println( CurrentStatus+">>" + inputStr.toString());
+		//System.out.println( CurrentStatus+">>" + inputStr.toString());
 		
 	}
 
