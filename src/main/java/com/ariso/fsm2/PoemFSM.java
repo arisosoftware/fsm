@@ -242,7 +242,7 @@ public class PoemFSM extends FSM<Character> {
 			writer2.write(vo.ReversePoem());
 			writer2.newLine();
 			
-			if (vo.Poem.length() %6 ==0)
+			if (vo.Poem.length() %6 ==0 && (vo.Poem.indexOf(".")==5))
 			{
 				writer3.write(vo.Poem.toString());
 				writer3.newLine();
@@ -271,4 +271,6 @@ public class PoemFSM extends FSM<Character> {
 		}
 	}
 
+	
+	
 }
