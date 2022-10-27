@@ -53,10 +53,10 @@ public class PoemFSM2 {
 //		}
 //		System.exit(1);
 //		 /////////////////////////////////
-		String filePath = "/tmp/Tan1.txt";
+		String filePath = "/tmp/ZZ/dataset/poetryTang/Tan1.txt";
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		int lineNo = 0;
-		BufferedWriter writer1 = new BufferedWriter(new FileWriter("/tmp/Poem/dataset/five.txt"));
+		BufferedWriter writer1 = new BufferedWriter(new FileWriter("/tmp/ZZ/dataset/poetryTang/five1.txt"));
 		String line;
 		while ((line = reader.readLine()) != null) {
 			lineNo++;
