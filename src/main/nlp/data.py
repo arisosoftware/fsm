@@ -15,12 +15,7 @@ class POEMS:
         poems = []
         file = open(filename, "r", encoding='utf-8')
         for line in file:  #every line is a poem
-            title, author, poem = line.strip().split("::")  #get title and poem
-            poem = poem.replace(' ','')
-            if len(poem) < 10 or len(poem) > 512:  #filter poem
-                continue
-            if '_' in poem or '《' in poem or '[' in poem or '(' in poem or '（' in poem:
-                continue
+            poem = line.replace('\n','')
             poem = '[' + poem + ']' #add start and end signs
             poems.append(poem)
             #print(title, author, poem)
@@ -29,7 +24,7 @@ class POEMS:
         wordFreq = collections.Counter()
         for poem in poems:
             wordFreq.update(poem)
-        # print(wordFreq)
+        print(wordFreq)
 
         # erase words which are not common
         #--------------------bug-------------------------

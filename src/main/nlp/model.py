@@ -15,9 +15,8 @@ class MODEL:
 
     def buildModel(self, wordNum, gtX, hidden_units = 128, layers = 2):
         """build rnn"""
-        with tf.variable_scope("embedding"): #embedding
-            embedding = tf.get_variable("embedding", [wordNum, hidden_units], dtype = tf.float32)
-            inputbatch = tf.nn.embedding_lookup(embedding, gtX)
+        embedding = tf.Variable("embedding", [wordNum, hidden_units], dtype = tf.float32)
+        inputbatch = tf.nn.embedding_lookup(embedding, gtX)
 
         basicCell = tf.contrib.rnn.BasicLSTMCell(hidden_units, state_is_tuple = True)
         stackCell = tf.contrib.rnn.MultiRNNCell([basicCell] * layers)
@@ -25,10 +24,10 @@ class MODEL:
         outputs, finalState = tf.nn.dynamic_rnn(stackCell, inputbatch, initial_state = initState)
         outputs = tf.reshape(outputs, [-1, hidden_units])
 
-        with tf.variable_scope("softmax"):
-            w = tf.get_variable("w", [hidden_units, wordNum])
-            b = tf.get_variable("b", [wordNum])
-            logits = tf.matmul(outputs, w) + b
+    
+        w = tf.Variable("softmaxw", [hidden_units, wordNum])
+        b = tf.Variable("softmaxb", [wordNum])
+        logits = tf.matmul(outputs, w) + b
 
         probs = tf.nn.softmax(logits)
         return logits, probs, stackCell, initState, finalState
@@ -36,8 +35,9 @@ class MODEL:
     def train(self, reload=True):
         """train model"""
         print("training...")
-        gtX = tf.placeholder(tf.int32, shape=[batchSize, None])  # input
-        gtY = tf.placeholder(tf.int32, shape=[batchSize, None])  # output
+        gtX = tf.keras.Input(dtype=tf.int32, shape=[batchSize, None])  # input
+
+        gtY = tf.keras.Input(dtype=tf.int32, shape=[batchSize, None])  # output
 
         logits, probs, a, b, c = self.buildModel(self.trainData.wordNum, gtX)
 
@@ -94,7 +94,9 @@ class MODEL:
     def test(self):
         """write regular poem"""
         print("genrating...")
-        gtX = tf.placeholder(tf.int32, shape=[1, None])  # input
+        #gtX = tf.keras.Input(dtype=tf.int32, shape=[1, None])  # input
+        gtX = tf.keras.Input(dtype=tf.int32, shape=[1, None])  # input
+        tf.keras.Input(dtype=tf.int32, shape=[None])
         logits, probs, stackCell, initState, finalState = self.buildModel(self.trainData.wordNum, gtX)
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
@@ -133,7 +135,8 @@ class MODEL:
     def testHead(self, characters):
         """write head poem"""
         print("genrating...")
-        gtX = tf.placeholder(tf.int32, shape=[1, None])  # input
+        gtX = tf.keras.Input(dtype=tf.int32, shape=[1, None])  # input
+
         logits, probs, stackCell, initState, finalState = self.buildModel(self.trainData.wordNum, gtX)
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())

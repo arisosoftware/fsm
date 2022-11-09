@@ -13,6 +13,8 @@ import os
 import random
 import time
 import collections
+import tensorflow
+from tensorflow import keras
 
 batchSize = 64
 
@@ -23,8 +25,8 @@ learningRateDecayRate = 0.95
 epochNum = 10                    # train epoch
 generateNum = 5                   # number of generated poems per time
 
-type = "poetrySong"                   # dataset to use, shijing, songci, etc
-trainPoems = "./dataset/" + type + "/" + type + ".txt" # training file location
+type = "poetryTang"                   # dataset to use, shijing, songci, etc
+trainPoems = "./dataset/" + type + "/five1.txt" # training file location
 checkpointsPath = "./checkpoints/" + type # checkpoints location
 
 saveStep = 1000                   # save model every savestep
