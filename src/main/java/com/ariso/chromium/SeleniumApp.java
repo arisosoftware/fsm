@@ -9,7 +9,7 @@ public class SeleniumApp {
 	public static void main(String[] args) {
 		
 		//Setting system properties of ChromeDriver
-		System.setProperty("webdriver.chrome.driver", "C://Selenium-java browserstack//chromedriver_win32//chromedriver.exe");
+		//sSystem.setProperty("webdriver.chrome.driver", "C://Selenium-java browserstack//chromedriver_win32//chromedriver.exe");
 
 		//Creating an object of ChromeDriver
 		WebDriver driver = new ChromeDriver();

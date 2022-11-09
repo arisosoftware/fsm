@@ -12,16 +12,22 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
 class BookMarkVO {
 	public int ID;
 	public int level;
 	public String url;
 	// public String cache;
+	public int PageSize;
 	public String name;
 	public BookMarkVO parent;
 	public int items;
 	public boolean TobeDelete;
-	// public StringBuffer buffer = new StringBuffer();
+// public StringBuffer buffer = new StringBuffer();
 }
 
 /**
@@ -98,6 +104,50 @@ public class BookmarkFSM extends FSM<String> {
 
 	}
 
+public void DownloadPage(BookMarkVO ov) {
+
+		if (ov.url.startsWith("http"))
+{okhttp3.Response response;
+	try {
+		
+	Request request = new Request.Builder()
+            .url(ov.url)
+            .build();
+	
+	System.out.println("download: "+ov.url);
+
+
+	response = client.newCall(request).execute();
+	if (response.isSuccessful()) {
+ 
+		try (ResponseBody body = response.body()) {
+			String bodytxt = response.body().string();
+			ov.PageSize = bodytxt.length();
+			SaveToFile("/tmp/ov"+ov.ID, bodytxt);
+		    }		
+			
+		} else {
+			response.body().close();
+			ov.TobeDelete = true;
+		}
+	} catch (IOException e) {
+		
+		ov.TobeDelete = true;
+		System.err.println(e.getMessage());
+	}	 
+}  
+		 
+	else
+	{
+		 
+		ov.TobeDelete = true;
+	}
+	
+
+}
+
+	private final OkHttpClient client = new OkHttpClient();
+
 	public void Log(String msg) {
 		System.out.print(msg);
 	}
@@ -105,6 +155,17 @@ public class BookmarkFSM extends FSM<String> {
 	public void OnRun(String word) {
 		super.Run(word);
 		// super.CurrentNode.Run(word, this);
+	}
+
+	void SaveToFile(String filename, String Text) {
+		try {
+			BufferedWriter writer1 = new BufferedWriter(new FileWriter(filename));
+			writer1.write(Text);
+			writer1.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -115,7 +176,7 @@ public class BookmarkFSM extends FSM<String> {
 
 		BookmarkFSM fsm = new BookmarkFSM();
 
-		String filePath = "/tmp/bookmarks_11_8_22.html";
+		String filePath = "/tmp/bookmarks_11_9_22.html";
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		int lineNo = 0;
 
@@ -124,9 +185,9 @@ public class BookmarkFSM extends FSM<String> {
 			lineNo++;
 			fsm.OnRun(line);
 		}
-		// out put
+// out put
 
-		// fsm.ExportBookMarkVoArraylist(fsm.Result, "Step1.txt");
+// fsm.ExportBookMarkVoArraylist(fsm.Result, "Step1.txt");
 		ArrayList<BookMarkVO> newResult = null;
 		int stepNo = 100;
 		do {
@@ -154,7 +215,7 @@ public class BookmarkFSM extends FSM<String> {
 		}
 	}
 
-	/// return null means no need to change anything.
+/// return null means no need to change anything.
 	ArrayList<BookMarkVO> ScanEmptyAndRemoveFolder(ArrayList<BookMarkVO> Result) {
 		boolean containsEmptyFolder = false;
 
@@ -180,7 +241,7 @@ public class BookmarkFSM extends FSM<String> {
 
 					curFolder = stack.pop();
 
-					// || curFolder.parent == null
+// || curFolder.parent == null
 
 				} while (curFolder.level > vo.level);
 				if (curFolder.level > vo.level) {
@@ -195,13 +256,23 @@ public class BookmarkFSM extends FSM<String> {
 			}
 
 		}
-		//
+//
 		for (int i = 0; i < Result.size(); i++) {
 			BookMarkVO vo = Result.get(i);
 			if (vo.items == 0 && vo.url == null) {
 				containsEmptyFolder = true;
+				vo.TobeDelete = true;
 			} else {
-				newResult.add(vo);
+				if (vo.url != null && vo.PageSize == 0) {
+					DownloadPage(vo);
+					if (vo.PageSize > 0) {
+						newResult.add(vo);
+					} else {
+						vo.TobeDelete = true;
+					}
+				} else {
+					newResult.add(vo);
+				}
 			}
 		}
 
