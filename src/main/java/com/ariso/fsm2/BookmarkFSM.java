@@ -104,47 +104,81 @@ public class BookmarkFSM extends FSM<String> {
 
 	}
 
-public void DownloadPage(BookMarkVO ov) {
+	public void DownloadPage(BookMarkVO ov) {
 
-		if (ov.url.startsWith("http"))
-{okhttp3.Response response;
-	try {
-		
-	Request request = new Request.Builder()
-            .url(ov.url)
-            .build();
-	
-	System.out.println("download: "+ov.url);
+		if (ov.url.startsWith("http")) {
+			okhttp3.Response response;
+			try {
 
+				// just using HEAD to test the url page is still existing or not. no need to download all page.
+				Request request = new Request.Builder().url(ov.url).head().build();
 
-	response = client.newCall(request).execute();
-	if (response.isSuccessful()) {
- 
-		try (ResponseBody body = response.body()) {
-			String bodytxt = response.body().string();
-			ov.PageSize = bodytxt.length();
-			SaveToFile("/tmp/ov"+ov.ID, bodytxt);
-		    }		
-			
-		} else {
-			response.body().close();
+				System.out.println("download: " + ov.url);
+
+				response = client.newCall(request).execute();
+				if (response.isSuccessful()) {
+
+					try (ResponseBody body = response.body()) {
+						//String bodytxt = response.body().string();
+						//double contentLength = Double.parseDouble(response.header("content-length"));
+						ov.PageSize = 1;
+						//SaveToFile("/tmp/cache/ov" + ov.ID+".htm", bodytxt);
+					}
+
+				} else {
+					response.body().close();
+					ov.TobeDelete = true;
+				}
+			} catch (IOException e) {
+				ov.TobeDelete = true;
+				System.err.println(e.getMessage());
+			}
+		}
+
+		else {
+
 			ov.TobeDelete = true;
 		}
-	} catch (IOException e) {
-		
-		ov.TobeDelete = true;
-		System.err.println(e.getMessage());
-	}	 
-}  
-		 
-	else
-	{
-		 
-		ov.TobeDelete = true;
+
 	}
 	
+	
+	public void DownloadPageFullly(BookMarkVO ov) {
 
-}
+		if (ov.url.startsWith("http")) {
+			okhttp3.Response response;
+			try {
+
+				Request request = new Request.Builder().url(ov.url).build();
+
+				System.out.println("download: " + ov.url);
+
+				response = client.newCall(request).execute();
+				if (response.isSuccessful()) {
+
+					try (ResponseBody body = response.body()) {
+						String bodytxt = response.body().string();
+						ov.PageSize = bodytxt.length();
+						SaveToFile("/tmp/cache/ov" + ov.ID+".htm", bodytxt);
+					}
+
+				} else {
+					response.body().close();
+					ov.TobeDelete = true;
+				}
+			} catch (IOException e) {
+				ov.TobeDelete = true;
+				System.err.println(e.getMessage());
+			}
+		}
+
+		else {
+
+			ov.TobeDelete = true;
+		}
+
+	}
+	
 
 	private final OkHttpClient client = new OkHttpClient();
 
