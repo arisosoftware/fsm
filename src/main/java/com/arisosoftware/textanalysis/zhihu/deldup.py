@@ -68,6 +68,7 @@ simpleskip = {
     "作者",
     "赞同",
     " 举报",
+    "点击查看全部评论",
 }
 
 # Define a translation table that maps the characters to be removed to None
@@ -81,19 +82,19 @@ patterns = {
     r"赞同 \d+": "",  # replace to null for remove it.
     r"查看全部 \d* 条回复" : "",
     r"查看全部 \d+ 个回答": "",  # replace to null for remove it.
-    #r"展开其他 \d+ 条回复​$": "",  # replace to null for remove it.
-    r"^展开其他 \d 条回复$":"",
+    r"^展开其他 .* 条回复$":"",
     r".*等 .*赞同了该回答$": "___",  # replace to null for remove it.
     r".*等 .*赞同了该文章": "",
     r".*赞同了回答.*前":"",
     r".*赞同了文章.*前":"",
-    
+    r"\d 人赞同了该回答":"",
     r"点击打开.*的主页" : "",
     r"^\d+$" :"",
     r".* · IP 属地.*" : "",
     r".*发布于 .*$" : "___",
     r"微信公众号.*" :"",
     r".默认." :"",
+    r"还有 .+ 的动态被收起":"",
 }
 
 
@@ -133,7 +134,7 @@ for sline in lines:
         print(sline)
         continue
 
-    if sline == "海盐计划":
+    if (sline == '海盐计划') | (sline == "相关问题") :
         break
 
     tline.append(sline)
