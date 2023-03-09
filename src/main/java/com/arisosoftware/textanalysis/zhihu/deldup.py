@@ -69,6 +69,8 @@ simpleskip = {
     "赞同",
     " 举报",
     "点击查看全部评论",
+    "去咨询",
+ 
 }
 
 # Define a translation table that maps the characters to be removed to None
@@ -95,6 +97,9 @@ patterns = {
     r"微信公众号.*" :"",
     r".默认." :"",
     r"还有 .+ 的动态被收起":"",
+    r".*次咨询$" :"",
+    r".*次赞同$" :"",
+    r".*优秀回答者$" :"",
 }
 
 
@@ -142,18 +147,28 @@ for sline in lines:
 
 
 previous_line = None
-for i in range(len(tline)):
+textlenth = len(tline)
+for i in range(textlenth):
     line = tline[i]
     previous_line = tline[i-1] if i > 0 else None
+    next_line = tline[i+1]  if i < textlenth-1 else None
     if (line == previous_line):
         continue
 
-    if line in seen_lines and (previous_line in seen_lines):
+    if line in seen_lines:
         prev_seen_i = seen_lines[line]
-        prev_seen_ix = seen_lines[previous_line]
-        if (prev_seen_i == (prev_seen_ix + 1)):
-            output_lines.append("\n")
-            continue
+        
+        if(previous_line in seen_lines):
+            prev_seen_ix = seen_lines[previous_line]
+            if (prev_seen_i == (prev_seen_ix + 1)):
+                #output_lines.append("\n")
+                continue
+
+        if(next_line in seen_lines):
+            prev_seen_iv = seen_lines[next_line]
+            if (prev_seen_i == (prev_seen_iv - 1)):
+                #output_lines.append("\n")
+                continue
 
     seen_lines[line] = i
     if line != "___" :
