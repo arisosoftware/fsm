@@ -62,7 +62,7 @@ simpleskip = {
     "搜索你感兴趣的内容…",
     "评论发布成功！",
     "添加评论",
-    "…阅读全文$" 
+#    "…阅读全文$" 
     "默认",
     "最新",
     "作者",
@@ -70,7 +70,10 @@ simpleskip = {
     " 举报",
     "点击查看全部评论",
     "去咨询",
- 
+    "赞赏用户",
+    "默认",
+    "我的收藏",
+
 }
 
 # Define a translation table that maps the characters to be removed to None
@@ -81,7 +84,9 @@ patterns = {
     r"他们也关注了该问题.*":  "",  # replace to null for remove it.
     r"​好问题 \d+": "",  # replace to null for remove it.
     r"\d+ 条评论": "",  # replace to null for remove it.
-    r"赞同 \d+": "",  # replace to null for remove it.
+    r"\d 人已赞赏$" :"",
+    r"​已赞同 \d+": "",  # replace to null for remove it.
+    r"^赞同 \d+": "",  # replace to null for remove it.
     r"查看全部 \d* 条回复" : "",
     r"查看全部 \d+ 个回答": "",  # replace to null for remove it.
     r"^展开其他 .* 条回复$":"",
@@ -100,6 +105,7 @@ patterns = {
     r".*次咨询$" :"",
     r".*次赞同$" :"",
     r".*优秀回答者$" :"",
+    r"\d+ 赞同 · \d+ 评论回答$" :"",
 }
 
 
@@ -115,14 +121,14 @@ output_file = sys.argv[2]
 
 with open(input_file, 'r', encoding='utf8') as f:
     text = f.read()
-
+    #lines = [line.decode('utf-8').strip() for line in f.readlines()]
 lines = text.split("\n")
 seen_lines = {}
 tline = []
 output_lines = []
-
+lineId = 0
 for sline in lines:
-
+    lineId = lineId + 1
     if sline is None or len(sline.strip()) == 0:
         continue
 
@@ -136,7 +142,7 @@ for sline in lines:
     #    continue
 
     if sline in simpleskip:
-        print(sline)
+        print(f"Line {lineId} removed: {sline}" )
         continue
 
     if (sline == '海盐计划') | (sline == "相关问题") :
