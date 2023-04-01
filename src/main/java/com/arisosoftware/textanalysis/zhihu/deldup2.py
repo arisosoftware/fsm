@@ -79,7 +79,12 @@ simpleskip = {
     "关注的问题",
     "关注的收藏夹",
     "屏蔽用户举报用户",
-
+    "​申请转载",
+    "首发于",
+    "写文章",
+    "关注他",
+    "还没有评论，发表第一个评论吧",
+    "推荐阅读","申请转载","已关注","文章被以下专栏收录",
 }
 
 # Define a translation table that maps the characters to be removed to None
@@ -115,83 +120,98 @@ patterns = {
 }
 
 
-#Main route
+def removeDuplation(inputFileName, outputFileName):
+    print(inputFileName + " inputFileName")
+    print(outputFileName + " outputFileName")
+    input_file = inputFileName
+    output_file = outputFileName
 
-if len(sys.argv) > 1:
-    input_file = sys.argv[1]
+    with open(input_file, 'r', encoding='utf8') as f:
+        text = f.read()
+        #lines = [line.decode('utf-8').strip() for line in f.readlines()]
+    lines = text.split("\n")
+    seen_lines = {}
+    tline = []
+    output_lines = []
+    lineId = 0
+    for sline in lines:
+        lineId = lineId + 1
+        if sline is None or len(sline.strip()) == 0:
+            continue
 
-if len(sys.argv) > 2:
-    output_file = sys.argv[2]
-else:
-    output_file = input_file +".md"
-
-if len(sys.argv) < 2:
-    print("Usage: python script.py input_file output_file")
-    sys.exit(1)
-
-
-with open(input_file, 'r', encoding='utf8') as f:
-    text = f.read()
-    #lines = [line.decode('utf-8').strip() for line in f.readlines()]
-lines = text.split("\n")
-seen_lines = {}
-tline = []
-output_lines = []
-lineId = 0
-for sline in lines:
-    lineId = lineId + 1
-    if sline is None or len(sline.strip()) == 0:
-        continue
-
-    for pattern, substitution in patterns.items():
-        sline2 = re.sub(pattern, substitution, sline)
-        if sline2 != sline :
-            #print(sline)
-            sline = sline2
-    
-    #if sline is None or len(sline.strip()) == 0:
-    #    continue
-
-    if sline in simpleskip:
-        print(f"Line {lineId} removed: {sline}" )
-        continue
-
-    if (sline == '海盐计划') | (sline == "相关问题") :
-        break
-
-    tline.append(sline)
-
-
-
-previous_line = None
-textlenth = len(tline)
-for i in range(textlenth):
-    line = tline[i]
-    previous_line = tline[i-1] if i > 0 else None
-    next_line = tline[i+1]  if i < textlenth-1 else None
-    if (line == previous_line):
-        continue
-
-    if line in seen_lines:
-        prev_seen_i = seen_lines[line]
+        for pattern, substitution in patterns.items():
+            sline2 = re.sub(pattern, substitution, sline)
+            if sline2 != sline :
+                #print(sline)
+                sline = sline2
         
-        if(previous_line in seen_lines):
-            prev_seen_ix = seen_lines[previous_line]
-            if (prev_seen_i == (prev_seen_ix + 1)):
-                #output_lines.append("\n")
-                continue
+        #if sline is None or len(sline.strip()) == 0:
+        #    continue
 
-        if(next_line in seen_lines):
-            prev_seen_iv = seen_lines[next_line]
-            if (prev_seen_i == (prev_seen_iv - 1)):
-                #output_lines.append("\n")
-                continue
+        if sline in simpleskip:
+            print(f"Line {lineId} removed: {sline}" )
+            continue
 
-    seen_lines[line] = i
-    if line != "___" :
-        output_lines.append(line)
-    else:
-        output_lines.append("\t")
-    
-with open(output_file, 'w', encoding='utf8') as f:
-    f.write('\n'.join(output_lines))
+        if (sline == '海盐计划') | (sline == "相关问题") :
+            break
+
+        tline.append(sline)
+
+
+
+    previous_line = None
+    textlenth = len(tline)
+    for i in range(textlenth):
+        line = tline[i]
+        previous_line = tline[i-1] if i > 0 else None
+        next_line = tline[i+1]  if i < textlenth-1 else None
+        if (line == previous_line):
+            continue
+
+        if line in seen_lines:
+            prev_seen_i = seen_lines[line]
+            
+            if(previous_line in seen_lines):
+                prev_seen_ix = seen_lines[previous_line]
+                if (prev_seen_i == (prev_seen_ix + 1)):
+                    #output_lines.append("\n")
+                    continue
+
+            if(next_line in seen_lines):
+                prev_seen_iv = seen_lines[next_line]
+                if (prev_seen_i == (prev_seen_iv - 1)):
+                    #output_lines.append("\n")
+                    continue
+
+        seen_lines[line] = i
+        if line != "___" :
+            output_lines.append(line)
+        else:
+            output_lines.append("\t")
+        
+    with open(output_file, 'w', encoding='utf8') as f:
+        f.write('\n'.join(output_lines))
+
+#######################################################
+
+#Main route
+prgname = sys.argv[0]
+
+for theFile in sys.argv:
+    if (theFile != prgname):
+        print(theFile)
+        outfilename_m = theFile + ".md"
+        removeDuplation( theFile, outfilename_m)
+
+# if len(sys.argv) > 1:
+#     input_file = sys.argv[1]
+
+# if len(sys.argv) > 2:
+#     output_file = sys.argv[2]
+# else:
+#     output_file = input_file +".md"
+
+# if len(sys.argv) < 2:
+#     print("Usage: python script.py input_file output_file")
+#     sys.exit(1)
+
