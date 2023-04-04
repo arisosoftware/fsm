@@ -22,3 +22,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /target/
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/fsm/FileContentIndex/c6787e80-2db5-42c9-99e3-82bff9ab3fe4.vsidx
+.vs/fsm/FileContentIndex/read.lock
+.vs/fsm/v17/.wsuo
