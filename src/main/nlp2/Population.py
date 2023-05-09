@@ -16,15 +16,21 @@ p_married = 0.9
 p_fertile = 0.75
 
 # 迭代次数
-T = 300
+T = 200
 
-# 迭代计算人口变化
+# 迭代计算每年的人口数量
 for t in range(T):
-    P.append(P[t] + (0.52*b*P[t] - d*P[t]) * 0.9 + (0.48*b*P[t] - d*P[t]) * 0.75 * 0.9 * 0.15)
+    # 计算出生和死亡人口数量
+    birth = (P[-1] * b * p_married * p_fertile * p1) + (P[-1] * b * p_married * p_fertile * p2 * 0.5)
+    death = P[-1] * d
+    # 更新人口数量
+    p_new = P[-1] + (birth - death) * 0.9
+    # 将新的人口数量添加到列表中
+    P.append(p_new)
 
 # 绘制人口增长曲线
 plt.plot(P)
 plt.xlabel('Year')
 plt.ylabel('Population')
-plt.title('Population Growth Model with Fertility and Mortality Rates')
+plt.title('Population Growth Model with Fertility and Mortality Rates (Iteration)')
 plt.show()

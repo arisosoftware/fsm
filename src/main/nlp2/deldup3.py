@@ -107,25 +107,24 @@ simpleskip = {
 patterns = {
     r"\u200B":"",
     r"\x0b":  "",  # replace to null for remove it.
-    r"\d+,\d+,\d*":  "",  # replace to null for remove it.
+    #r"[\d,]*":  "",  # replace to null for remove it.
     r"他们也关注了该问题.*":  "",  # replace to null for remove it.
     r"​好问题 \d+": "",  # replace to null for remove it.
-    r"\d+ 条评论": "",  # replace to null for remove it.
-    r"\d+ 人已赞赏$" :"",
-    #r"​已赞同 \d*": "",  # replace to null for remove it.
-    #r"​.*赞同.*\d*": "",  # replace to null for remove it.
-    r"^赞同.\d+": "",  # replace to null for remove it.
-    r"查看全部.\d* 条回复" : "",
-    r"查看全部.\d+ 个回答": "",  # replace to null for remove it.
-    r"^展开其他 .* 条回复$":"",
+    r"[\d,]+ 条评论": "",  # replace to null for remove it.
+    r"[\d,]+ 人已赞赏$" :"",
+
+    r"^赞同.[\d,]+": "",  # replace to null for remove it.
+    r"查看全部.[\d,]* 条回复" : "",
+    r"查看全部.[\d,]+ 个回答": "",  # replace to null for remove it.
+    r"^展开其他 [\d,]* 条回复$":"",
     r".*等 .*赞同了该回答$": "___",  # replace to null for remove it.
     r".*等 .*赞同了该文章": "",
     r".*赞同了回答.*前":"",
     r".*赞同了文章.*前":"",
-    r"\d 人也赞同了该回答":"",
-    r"\d 人赞同了该回答":"",
+    r"[\d,]+ 人也赞同了该回答":"",
+    r"[\d,]+ 人赞同了该回答":"",
     r"点击打开.*的主页" : "",
-    r"^\d+$" :"",
+    r"^[\d,]+$" :"",
     r".* · IP 属地.*" : "",
     r".*发布于 .*$" : "___",
     r"微信公众号.*" :"",
@@ -136,24 +135,25 @@ patterns = {
     r".*优秀回答者$" :"",
     r"[“【‘]" :"「",
     r"[”】’]" :"」",
-    r"\d+ 赞同 · \d+ 评论回答$" :"",
-    r"\d+ 个回答被折叠（为什么？）":"",
-    r"\d+ 人读过":"",
+    r"[\d,]+ 赞同 · [\d,]+ 评论回答$" :"",
+    r"[\d,]+ 个回答被折叠（为什么？）":"",
+    r"[\d,]+ 人读过":"",
     r".*举报专区$" :"",
     r".*的优秀答主$" :"",
-    r"回答\d+" :"",
-    r"^视频\d+" :"",
-    r"^提问\d+" :"",
-    r"^回答\d+" :"",
-    r"^文章\d+" :"",
-    r"^专栏\d+" :"",
-    r"^想法\d+" :"",
-    r"^收藏\d+" :"",
+    r"回答[\d,]+" :"",
+    r"^视频[\d,]+" :"",
+    r"^提问[\d,]+" :"",
+    r"^回答[\d,]+" :"",
+    r"^文章[\d,]+" :"",
+    r"^专栏[\d,]+" :"",
+    r"^想法[\d,]+" :"",
+    r"^收藏[\d,]+" :"",
     r"^用户封面IP 属地.*" :"",
-    r"\d+ 人赞同了该文章$" :"",
-    r"[0-9.]+ 万播放" :"",
-    r"\d+ 赞同视频" :"",
+    r"[\d,]+ 人赞同了该文章$" :"",
+    r"[0-9.,]+ 万播放" :"",
+    r"[\d,]+ 赞同视频" :"",
     r".*发表了文章.*\d+ 分钟前" :"",
+    r"已赞同 [\d,]+" : "",
 
 } 
 
