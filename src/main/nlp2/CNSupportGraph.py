@@ -1,12 +1,12 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import tkinter as tk
-import tkinter.font as tkFont
+from matplotlib.font_manager import FontProperties
 
-plt.rcParams['font.sans-serif'] = ['Ubuntu', 'Noto Sans CJK']
-plt.rcParams['axes.unicode_minus'] = False
-plt.rcParams['font.family'] = 'NotoSansCJK-Regular'
-plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC Regular']
+font_path = '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
+font_prop = FontProperties(fname=font_path)
+
+plt.rcParams['font.family'] = font_prop.get_name()
+plt.rcParams['font.sans-serif'] = [font_prop.get_name()]
 
 # 创建一个有标签的图形
 G = nx.DiGraph()
@@ -26,3 +26,15 @@ plt.show()
 
 
 #pe/lib/python3.7/tkinter/__init__.py:749: UserWarning: Glyph 24352 (\N{CJK UNIFIED IDEOGRAPH-5F20}) missing from current font.
+
+
+
+
+# 获取所有已安装的字体
+#fonts = fm.findSystemFonts()
+
+# 输出所有字体的名称和路径
+#for font in fonts:
+#   print(font)
+
+
