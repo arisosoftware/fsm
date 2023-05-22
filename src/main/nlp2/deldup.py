@@ -3,7 +3,9 @@ import io
 import re
 import sys
 import os
+import difflib
 from collections import OrderedDict
+
 # Requirement: 
 #>>> import hashlib
 #>>> hashlib.sha256(b"Nobody inspects the spammish repetition").hexdigest()
@@ -160,6 +162,27 @@ patterns = {
 } 
 
 
+#the Python function that takes file1, file2, and file3 as parameters. It performs the regex replacement in file1.txt, saves the modified content to file2.txt, compares the two files, and saves the differing content to file3.txt
+
+def regex_replace_and_compare(file1, file2):
+    # Perform regex replacement in file1.txt and save to file2.txt
+    with open(file1, "r") as f1, open(file2, "w") as f2:
+        content = f1.read()
+        modified_content = re.sub(r".*\n.*阅读全文", "", content)
+        f2.write(modified_content)
+
+    # Compare file1.txt and file2.txt and save differences to file3.txt
+    with open(file1, "r") as f1, open(file2, "r") as f2:
+        diff_output = list(difflib.unified_diff(f1.readlines(), f2.readlines(), lineterm=""))
+        diff_output = [line[1:] for line in diff_output if line.startswith("+")]
+        #f3.write("".join(diff_output))
+        print("".join(diff_output))
+
+
+
+
+
+
 def removeDuplation(inputFileName, outputFileName):
     print(inputFileName + " inputFileName")
     print(outputFileName + " outputFileName")
@@ -277,8 +300,11 @@ prgname = sys.argv[0]
 for theFile in sys.argv:
     if (theFile != prgname):
         print(theFile)
-        outfilename_m = theFile + ".md"
+        outfilename_m = theFile + ".md1"
         removeDuplation( theFile, outfilename_m)
+        outfilename_m1 = theFile + ".md"
+        regex_replace_and_compare(outfilename_m, outfilename_m1)
+        os.remove(outfilename_m)
 
 # if len(sys.argv) > 1:
 #     input_file = sys.argv[1]
