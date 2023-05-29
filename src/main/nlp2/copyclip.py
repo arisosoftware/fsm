@@ -1,9 +1,20 @@
+import tkinter as tk
 import clipboard
 from datetime import datetime
 
+# you need to 
+# pip3 install clipboard
+# pip3 install tkinter
+
+def get_clipboard_as_html():
+    root = tk.Tk()
+    clipboard_html = root.clipboard_get(type='text/html')
+    root.destroy()
+    return clipboard_html
+
 def save_clipboard_as_html():
     # Get clipboard content as HTML
-    clipboard_html = clipboard.paste()
+    clipboard_html = get_clipboard_as_html()
 
     # Generate timestamp for the filename
     timestamp = datetime.now().strftime("%H%M%S")
@@ -25,3 +36,4 @@ while True:
     
     # Trigger the function to get clipboard, convert to HTML, and save to file
     save_clipboard_as_html()
+ 
