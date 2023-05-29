@@ -5,6 +5,7 @@ import sys
 import os
 import difflib
 from collections import OrderedDict
+from datetime import datetime
 
 # Requirement: 
 #>>> import hashlib
@@ -105,26 +106,49 @@ simpleskip = {
     "按时间排序",
     "点击可播放视频",
 
+    "书店",
+    "圆桌",
+    "专栏",
+    "付费咨询",
+    "百科",
+    "我关注的问题",
+    "我的邀请",
+    "我的余额",
+    "我的礼券",
+    "站务中心",
+    "帮助与客服",
+    "版权服务中心",
+    "回答问题",
+    "发视频",
+    "写想法",
+    "恭喜已加入海盐计划",
+    "加入海盐计划可加速成长获得更多扶持。",
+    "今日阅读 (播放) 数",
+    "昨日数据",
+    "今日新增赞同数",
+    "「馆」中窥万物",
+    "此生必看的神仙文物",
+    "塞尔达传说 | 海拉鲁一千零一夜",
+    "点击参与讨论 >>",
+    "第三届科幻文学奖「读客 X 知乎联合征文」",
+    "2023 季中冠军赛",
+    "关注圆桌参与精彩赛事热聊",
+    "未来生活家",
+    "邀你分享家的智能与舒适",
+    "进入创作中心",
+    "推荐关注",
+    "记得点赞收藏哦！"
+
 }
 
 # Define a translation table that maps the characters to be removed to None
+# this patterns for each line
 patterns = {
-    r"\u200B":"",
-    r"\x0b":  "",  # replace to null for remove it.
+
     #r"[\d,]*":  "",  # replace to null for remove it.
     r"他们也关注了该问题.*":  "",  # replace to null for remove it.
     r"​好问题 \d+": "",  # replace to null for remove it.
-    r"[\d,]+ 条评论": "",  # replace to null for remove it.
-    r"[\d,]+ 人已赞赏$" :"",
 
-    r"^赞同.[\d,]+": "",  # replace to null for remove it.
-    r"查看全部.[\d,]* 条回复" : "",
-    r"查看全部.[\d,]+ 个回答": "",  # replace to null for remove it.
-    r"^展开其他 [\d,]* 条回复$":"",
-    r".*等 .*赞同了该回答$": "___",  # replace to null for remove it.
-    r".*等 .*赞同了该文章": "",
-    r".*赞同了回答.*前":"",
-    r".*赞同了文章.*前":"",
     r"[\d,]+ 人也赞同了该回答":"",
     r"[\d,]+ 人赞同了该回答":"",
     r"点击打开.*的主页" : "",
@@ -144,41 +168,84 @@ patterns = {
     r"[\d,]+ 人读过":"",
     r".*举报专区$" :"",
     r".*的优秀答主$" :"",
-    r"回答[\d,]+" :"",
-    r"^视频[\d,]+" :"",
-    r"^提问[\d,]+" :"",
-    r"^回答[\d,]+" :"",
-    r"^文章[\d,]+" :"",
-    r"^专栏[\d,]+" :"",
-    r"^想法[\d,]+" :"",
-    r"^收藏[\d,]+" :"",
+    r".*等 .*赞同了该回答$": "___",  # replace to null for remove it.
     r"^用户封面IP 属地.*" :"",
     r"[\d,]+ 人赞同了该文章$" :"",
     r"[0-9.,]+ 万播放" :"",
     r"[\d,]+ 赞同视频" :"",
     r".*发表了文章.*\d+ 分钟前" :"",
     r"已赞同 [\d,]+" : "",
-
+    r"回复了回答下你的评论.* " : "",
+    r".*回答了问题.*\d+ 分钟前" :"",
+    r".*的人也关注了.*TA" :"",
+    r".*网药械信息备字.*" :"",
+    r"你关注的.*也关注了.*TA" :"",
 } 
 
+# this patterns for full text file ,
 
-#the Python function that takes file1, file2, and file3 as parameters. It performs the regex replacement in file1.txt, saves the modified content to file2.txt, compares the two files, and saves the differing content to file3.txt
+regex_FullFile = [
+    r"\u200B",
+    r"\x0b",
+    r"你可能感兴趣.*.*领域答主\n",
+    r".*\n.*阅读全文\n",
+    r".*\n.*领域答主\n",
+    r"<\/?p>",
+    r"\n查看全部.[\d,]* 条回复",
+    r"\n[\d,]+ 条评论",
+    r"\n[\d,]+ 人已赞赏$",
+    r"\n赞同.[\d,]+",    
+    r"\n查看全部.[\d,]* 条回复",
+    r"\n查看全部.[\d,]+ 个回答",
+    r"\n展开其他 [\d,]* 条回复$",
+    r"\n.*等 .*赞同了该文章",
+    r"\n.*赞同了回答.*前",
+    r"\n.*赞同了文章.*前",
+    r"\n回答[\d,]+",
+    r"\n视频[\d,]+",
+    r"\n提问[\d,]+",
+    r"\n回答[\d,]+",
+    r"\n文章[\d,]+",
+    r"\n专栏[\d,]+",
+    r"\n想法[\d,]+",
+    r"\n收藏[\d,]+",
+]
 
-def regex_replace_and_compare(file1, file2):
-    # Perform regex replacement in file1.txt and save to file2.txt
-    with open(file1, "r") as f1, open(file2, "w") as f2:
-        content = f1.read()
-        modified_content = re.sub(r".*\n.*阅读全文", "", content)
-        f2.write(modified_content)
 
-    # Compare file1.txt and file2.txt and save differences to file3.txt
-    with open(file1, "r") as f1, open(file2, "r") as f2:
-        diff_output = list(difflib.unified_diff(f1.readlines(), f2.readlines(), lineterm=""))
-        diff_output = [line[1:] for line in diff_output if line.startswith("+")]
-        #f3.write("".join(diff_output))
-        print("".join(diff_output))
+def apply_regex_replace(regex_list, input_file_path, output_file_path):
+    # Read the input file
+    with open(input_file_path, "r") as file:
+        input_text = file.read()
+
+    # Apply regular expressions
+    for regex in regex_list:
+        input_text = re.sub(regex, "", input_text)
+
+    # Write the modified text to the output file
+    with open(output_file_path, "w") as file:
+        file.write(input_text)
 
 
+
+# #the Python function that takes file1, file2, and file3 as parameters. It performs the regex replacement in file1.txt, saves the modified content to file2.txt, compares the two files, and saves the differing content to file3.txt
+
+# def regex_replace_and_compare(file1, file2):
+#     # Perform regex replacement in file1.txt and save to file2.txt
+#     with open(file1, "r") as f1, open(file2, "w") as f2:
+#         content = f1.read()
+#         modified_content = re.sub(r".*\n.*阅读全文", "", content)
+#         f2.write(modified_content)
+
+#     # Compare file1.txt and file2.txt and save differences to file3.txt
+#     with open(file1, "r") as f1, open(file2, "r") as f2:
+#         diff_output = list(difflib.unified_diff(f1.readlines(), f2.readlines(), lineterm=""))
+#         diff_output = [line[1:] for line in diff_output if line.startswith("+")]
+#         #f3.write("".join(diff_output))
+#         print("".join(diff_output))
+
+
+# create an ordered dictionary to store unique lines in the order they appear -- update to global
+unique_lines = OrderedDict()
 
 
 
@@ -204,7 +271,7 @@ def removeDuplation(inputFileName, outputFileName):
         if sline is None:
             continue
 
-        sline = sline.strip()
+        sline = sline.replace("\r","").replace("\n","").strip()
 
         pIndex = 0
 
@@ -212,11 +279,11 @@ def removeDuplation(inputFileName, outputFileName):
             pIndex = pIndex + 1
             sline2 = re.sub(pattern, substitution, sline)
             if sline2 != sline :
-                if pIndex>3:
-                    print(f"Line {lineId} Regex:{pattern}|{substitution}|{sline},=> {sline2}" )
-
+                #debug
+                #if pIndex>3:
+                #    print(f"Line {lineId} Regex:{pattern}|{substitution}|{sline},=> {sline2}" )
                 sline = sline2
-
+            # end //if sline2 != sline :
         
         if sline in simpleskip:
             print(f"Line {lineId} removed: {sline}" )
@@ -227,9 +294,6 @@ def removeDuplation(inputFileName, outputFileName):
 
         tline.append(sline)
 
-
-    # create an ordered dictionary to store unique lines in the order they appear
-    unique_lines = OrderedDict()
 
     previous_line = None
     tline_lenth = len(tline)
@@ -300,11 +364,13 @@ prgname = sys.argv[0]
 for theFile in sys.argv:
     if (theFile != prgname):
         print(theFile)
-        outfilename_m = theFile + ".md1"
-        removeDuplation( theFile, outfilename_m)
-        outfilename_m1 = theFile + ".md"
-        regex_replace_and_compare(outfilename_m, outfilename_m1)
-        os.remove(outfilename_m)
+        outfilename_m2 = theFile + ".md2"
+        apply_regex_replace(regex_FullFile, theFile, outfilename_m2)
+        #outfilename_m2 = theFile + ".md3"
+        #apply_regex_replace(regex_SimpleSkip, theFile, outfilename_m2)
+        outfilename_m = theFile + datetime.now().strftime("_%Y%m%d_%H%M")+ ".md"
+        removeDuplation( outfilename_m2, outfilename_m)
+        os.remove(outfilename_m2)
 
 # if len(sys.argv) > 1:
 #     input_file = sys.argv[1]
