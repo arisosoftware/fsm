@@ -1,15 +1,18 @@
-import tkinter as tk
-import clipboard
+import pyperclip
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 # you need to 
 # pip3 install clipboard
 # pip3 install tkinter
+# pip3  install pyperclip
+# pip3  install beautifulsoup4
+
 
 def get_clipboard_as_html():
-    root = tk.Tk()
-    clipboard_html = root.clipboard_get(type='text/html')
-    root.destroy()
+    clipboard_text = pyperclip.paste()
+    soup = BeautifulSoup(clipboard_text, 'html.parser')
+    clipboard_html = soup.prettify()
     return clipboard_html
 
 def save_clipboard_as_html():
