@@ -247,6 +247,29 @@ def apply_regex_replace(regex_list, input_file_path, output_file_path):
 # create an ordered dictionary to store unique lines in the order they appear -- update to global
 unique_lines = OrderedDict()
 
+def reverseFile(inputFileName, outputFileName):
+    # Read the input file
+    with open(inputFileName, "r") as file:
+        lines = file.readlines()
+
+    # Reverse the lines
+    reversed_lines = lines[::-1]
+
+    # Write the reversed lines to the output file
+    with open(outputFileName, "w") as file:
+        file.writelines(reversed_lines)
+
+def update_unique_lines(input_file):
+    with open(input_file, 'r', encoding='utf8') as f:
+        text = f.read()
+        
+    lines = text.split("\n")
+    for sline in lines:
+        if len(sline)>0 and sline in unique_lines:
+            continue
+        # add the line to the dictionary
+        unique_lines[sline] = True
+
 
 
 
@@ -314,11 +337,6 @@ def removeDuplation(inputFileName, outputFileName):
         if len(line)>0 and line in unique_lines:
             continue
 
-        #if (len(line) == 0) and (previous_line is not None ) and (len(previous_line)==0):
-            #output_lines.append("keep $line")
-            #continue
-
-        # add the line to the dictionary
         unique_lines[line] = True
 
         if line in seen_lines:
@@ -327,13 +345,11 @@ def removeDuplation(inputFileName, outputFileName):
             if(previous_line in seen_lines):
                 prev_seen_ix = seen_lines[previous_line]
                 if (prev_seen_i == (prev_seen_ix + 1)):
-                    #output_lines.append("\n")
                     continue
 
             if(next_line in seen_lines):
                 prev_seen_iv = seen_lines[next_line]
                 if (prev_seen_i == (prev_seen_iv - 1)):
-                    #output_lines.append("\n")
                     continue
 
         seen_lines[line] = i
@@ -364,13 +380,23 @@ prgname = sys.argv[0]
 for theFile in sys.argv:
     if (theFile != prgname):
         print(theFile)
-        outfilename_m2 = theFile + ".md2"
-        apply_regex_replace(regex_FullFile, theFile, outfilename_m2)
-        #outfilename_m2 = theFile + ".md3"
-        #apply_regex_replace(regex_SimpleSkip, theFile, outfilename_m2)
+
+        if theFile == "filter":
+            update_unique_lines(theFile)
+            continue
+
+        tmpfile1 = "tmpreverse.1"
+        tmpfile2 = "tmpreverse.2"
+        tmpfile3 = "tmpreverse.3"
+        reverseFile(theFile, tmpfile1)
+        apply_regex_replace(regex_FullFile, tmpfile1, tmpfile2)
+        removeDuplation( tmpfile2, tmpfile3)
         outfilename_m = theFile + datetime.now().strftime("_%Y%m%d_%H%M")+ ".md"
-        removeDuplation( outfilename_m2, outfilename_m)
-        os.remove(outfilename_m2)
+        reverseFile(tmpfile3, outfilename_m)
+
+        os.remove(tmpfile1)
+        os.remove(tmpfile2)
+        os.remove(tmpfile3)
 
 # if len(sys.argv) > 1:
 #     input_file = sys.argv[1]

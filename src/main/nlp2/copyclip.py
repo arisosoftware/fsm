@@ -20,15 +20,19 @@ def save_clipboard_as_html():
     clipboard_html = get_clipboard_as_html()
 
     # Generate timestamp for the filename
-    timestamp = datetime.now().strftime("%H%M%S")
+    timestamp = datetime.now().strftime("_%Y%m%d_%H%M%S")
 
     # Save clipboard content as HTML to a file
-    filename = f"{timestamp}.html"
-    with open(filename, "w", encoding="utf-8") as file:
+    label = f"Time_{timestamp}_________________________________\n"
+    #     file.write(clipboard_html)
+    with open(logfile_path, mode="a", encoding="utf-8") as file:
+        file.write(label)
         file.write(clipboard_html)
-    
-    print(f"Clipboard content saved as {filename}")
+    print(f"Clipboard content saved as {label}")
 
+
+timestamp = datetime.now().strftime("%H%M%S")
+logfile_path = f"ZhihuLog{timestamp}.txt" 
 # Endless loop
 while True:
     # Wait for user input (Enter key press or "quit" to exit)
@@ -40,3 +44,7 @@ while True:
     # Trigger the function to get clipboard, convert to HTML, and save to file
     save_clipboard_as_html()
  
+
+
+
+
