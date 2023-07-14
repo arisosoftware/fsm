@@ -154,7 +154,7 @@ patterns = {
     r"点击打开.*的主页" : "",
     r"^[\d,]+$" :"",
     r".* · IP 属地.*" : "",
-    r".*发布于 .*$" : "___",
+    r".*发布于 .*$" : "",
     r"微信公众号.*" :"",
     r".默认." :"",
     r"还有 .+ 的动态被收起":"",
@@ -168,7 +168,7 @@ patterns = {
     r"[\d,]+ 人读过":"",
     r".*举报专区$" :"",
     r".*的优秀答主$" :"",
-    r".*等 .*赞同了该回答$": "___",  # replace to null for remove it.
+    r".*等 .*赞同了该回答$": "",  # replace to null for remove it.
     r"^用户封面IP 属地.*" :"",
     r"[\d,]+ 人赞同了该文章$" :"",
     r"[0-9.,]+ 万播放" :"",
@@ -309,7 +309,7 @@ def removeDuplation(inputFileName, outputFileName):
             # end //if sline2 != sline :
         
         if sline in simpleskip:
-            print(f"Line {lineId} removed: {sline}" )
+            #print(f"Line {lineId} removed: {sline}" )
             continue
 
         #if (sline == '海盐计划') | (sline == "相关问题") :
@@ -321,8 +321,7 @@ def removeDuplation(inputFileName, outputFileName):
     previous_line = None
     tline_lenth = len(tline)
     
-    
-
+     
     for i in range(tline_lenth):
         line = tline[i]
         #print(f"Line {i} .. {line}" )
@@ -330,34 +329,50 @@ def removeDuplation(inputFileName, outputFileName):
         previous_line = tline[i-1] if i > 0 else None
         
         next_line = tline[i+1]  if i < tline_lenth-1 else None
-        
+        commentUser = ''
+
         if (line == previous_line):
+            if (len(line)>0):
+                lastlineINoutput = output_lines[len(output_lines)-1]
+                if (lastlineINoutput == line ):
+                    output_lines[len(output_lines)-1] = "`" +line + "`:"
+                    commentUser = line
+                    #print(f"Line {i} .. {commentUser} commentUser set" )
+                else:
+                    commentUser = ''
+
             continue
 
         if len(line)>0 and line in unique_lines:
-            continue
+            #vv = output_lines[len(output_lines)-1]
+            #if not vv.startswith("`"):
+            if line != 'Regex' and line != commentUser:
+                #print(f"Line {i} .. {line} unique- removed" )
+                continue
 
-        unique_lines[line] = True
 
         if line in seen_lines:
             prev_seen_i = seen_lines[line]
 
-            if(previous_line in seen_lines):
-                prev_seen_ix = seen_lines[previous_line]
-                if (prev_seen_i == (prev_seen_ix + 1)):
-                    continue
+            # if(previous_line in seen_lines):
+            #     prev_seen_ix = seen_lines[previous_line]
+            #     if (prev_seen_i == (prev_seen_ix + 1)):
+            #         continue
 
             if(next_line in seen_lines):
                 prev_seen_iv = seen_lines[next_line]
                 if (prev_seen_i == (prev_seen_iv - 1)):
+                    line = line +" >> "
                     continue
 
-        seen_lines[line] = i
 
-        if line != "___" :
-            output_lines.append(line)
-        else:
-            output_lines.append("\t")
+        seen_lines[line] = i
+        unique_lines[line] = True
+        output_lines.append(line)
+ 
+
+    #  -- write to file
+
 
     with open(output_file, 'w', encoding='utf8') as f:
         #f.write('\n'.join(output_lines))
