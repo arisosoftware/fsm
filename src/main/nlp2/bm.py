@@ -9,9 +9,9 @@ FileId = 100000
 def download_html(url):
     try:
         response = urllib.request.urlopen(url, timeout=3)
-        html_content = response.read().decode("utf-8")
-
-        return html_content
+        return response.read()
+        # html_content = response.read().decode("utf-8")
+        # return html_content
     except Exception as e:
         print(f"Failed to download {url}: {str(e)}")
         return None
@@ -32,10 +32,6 @@ def calculate_md5_hex(input_string):
 # input_string = "Hello, World!"
 # md5_result = calculate_md5_hex(input_string)
 # print("MD5 Hex String:", md5_result)
-
-
-
-
 
 
 
@@ -70,17 +66,19 @@ for line in lines:
             url = a_tag.get("href")
             label = a_tag.string
             if url:
-                html_content = download_html(url)
-                if html_content is not None:
-                    # Output the anchor tag with URL and label
-                    FileId +=1
-                    new_bookmark_content += f'<a href="{url}">{label}</a>\n'
-                    downloadPage = f'./downloads/F{FileId}.htm'
-                    print ( f"ID = {FileId} success {url} ")
-                    with open(downloadPage, "w", encoding="utf-8") as fsave:
-                            fsave.write(url)
-                            fsave.write('\n\n\n\n\n\n\n\n\n')
-                            fsave.write(html_content)
+                url_md5 = calculate_md5_hex(url)    
+                downloadPage = f'./downloads/F{url_md5}.htm'    
+                if not os.path.exists(downloadPage):
+                    html_content = download_html(url)
+                    if html_content is not None:
+                        # Output the anchor tag with URL and label
+                        FileId +=1
+                        new_bookmark_content += f'<a href="{url}">{label}</a>\n'
+                        
+                        
+                        print ( f"{FileId}  {url_md5}  success {url} ")
+                        with open(downloadPage, "wb") as fsave:
+                                fsave.write(html_content)
 
 # Rewrite the bookmark.htm file with valid anchor tags
 with open(bookmark_file, "w", encoding="utf-8") as f:
