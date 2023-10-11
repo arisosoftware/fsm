@@ -3,6 +3,33 @@ import logging
 import re
 import datetime
 
+
+def format_datetime(date_str, time_str):
+    # Combine the date and time strings
+    datetime_str = f"{date_str} {time_str}"
+    # Parse the datetime string and format it
+    datetime_obj = datetime.datetime.strptime(datetime_str, "%a, %b %d %I:%M%p")
+    return datetime_obj.strftime("%m-%d %H:%M")
+
+def reorderText(input_text):
+    # Split the line by tabs
+    columns = input_text.split('\t')
+    if len(columns) > 7:
+        # Format date and time columns 2 and 3
+        date_time_1 = format_datetime(columns[3], columns[2])
+        date_time_2 = format_datetime(columns[6], columns[5])
+
+        reordered_columns_cde = [
+            columns[0], columns[1], columns[4], date_time_1, columns[7], date_time_2
+        ]
+        reordered_columns_cde.extend(columns[8:])
+        # Join the reordered columns with tabs
+        line =""
+        line = '\t'.join(reordered_columns_cde)
+        return line
+    else:
+        return input_text
+
 def process_text2(input_text):
 
     input_text = re.sub("\nTotal_Time","\tTotal_Time",input_text)
@@ -26,23 +53,8 @@ def process_text2(input_text):
         line = line.replace("Toronto","多伦多")
         line = line.replace("layover in","侯机")
         line = line.replace("Unselect this return","")
+        line = reorderText(line)
         
-        # Split the line by tabs
-        columns = line.split('\t')
-        if len(columns) > 7:
-            # Convert columns 2 and 3 to a datetime object
-            date_time_str = columns[3] + " " + columns[2]
-            date_time_1 = datetime.strptime(date_time_str, "%a, %b %d %I:%M%p")
-            date_time_str = columns[6] + " " + columns[5]
-            date_time_2 = datetime.strptime(date_time_str, "%a, %b %d %I:%M%p")
-            # Reorder the columns 
-            reordered_columns_cde = [columns[0],columns[1],
-                columns[4], columns[3], columns[2],
-                columns[7], columns[6], columns[5],                ]
-            reordered_columns_cde.extend(columns[8:])
-            # Join the reordered columns with tabs
-            line = '\t'.join(reordered_columns_cde)
-
         cleaned_text = cleaned_text +'\n' + line
         
     return cleaned_text
@@ -113,10 +125,7 @@ def save_clipboard_as_html():
     # Print the clipboard text to the console
     normaltxt = process_text(clipboard_text)
     normaltxt = process_text2(normaltxt)
-    print("Text:")
     print(normaltxt)
-    # Append the clipboard text to the log file
-    # Get the current timestamp
     timestamp ='\n\n'+ datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')+'\n'
     # Open the file in "append" mode
     with open(file_path, "a") as file:
@@ -124,7 +133,7 @@ def save_clipboard_as_html():
         file.write(timestamp)
         file.write(normaltxt)
     # then the file will be Closed automatic, then copy to clipboard again
-    pyperclip.copy(normaltxt)
+    # pyperclip.copy(normaltxt)
 
 
 # ------------------------main 
