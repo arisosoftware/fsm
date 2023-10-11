@@ -48,7 +48,9 @@ def reorderText(input_text):
         if  "layover in" in columns[8]:
             #print (input_text)
             newcolum8 = transform_text(columns[8] )
-            columns[8] = newcolum8
+            columns[8] = columns[9]
+            columns[9] = newcolum8
+
             #print (newcolum8)        
         # Format date and time columns 2 and 3
         date_time_1 = format_datetime(columns[3], columns[2])
@@ -101,7 +103,7 @@ def process_text2(input_text):
         if "Total_" in line:
         #     cleaned_text = cleaned_text +'\n'
             line = re.sub("Total_","\nTotal_",line)
-            
+
         cleaned_text = cleaned_text +'\n' + line
         
 
