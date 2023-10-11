@@ -4,7 +4,7 @@ import re
 import datetime
 
 #To transform the input "12h 45m 候机 香港" into "香港候机 12小时 45m,"
-def transform_text(input_text):
+def transform_text2(input_text):
     # Split the input into words and numbers
     words_and_numbers = re.findall(r'\d+[hH]\s*\d+[mM]|\S+', input_text)
 
@@ -17,6 +17,20 @@ def transform_text(input_text):
 
     return transformed_text
 
+def transform_text(input_text):
+    # Use regular expressions to find the hours and minutes
+    match = re.search(r'(\d+)h (\d+)m layover in (\S+)', input_text)
+
+    if match:
+        hours = int(match.group(1))
+        minutes = int(match.group(2))
+        location = match.group(3)
+
+        # Create the transformed text
+        transformed_text = f"{location}候机 {hours}.{minutes}小时"
+        return transformed_text
+    else:
+        return input_text  # If no match is found, return the original text
 
 
 def format_datetime(date_str, time_str):
@@ -29,7 +43,13 @@ def format_datetime(date_str, time_str):
 def reorderText(input_text):
     # Split the line by tabs
     columns = input_text.split('\t')
+
     if len(columns) > 7:
+        if  "layover in" in columns[8]:
+            #print (input_text)
+            newcolum8 = transform_text(columns[8] )
+            columns[8] = newcolum8
+            #print (newcolum8)        
         # Format date and time columns 2 and 3
         date_time_1 = format_datetime(columns[3], columns[2])
         date_time_2 = format_datetime(columns[6], columns[5])
@@ -37,14 +57,7 @@ def reorderText(input_text):
         reordered_columns_cde = [
             columns[0], columns[1], columns[4], date_time_1, columns[7], date_time_2
         ]
-
-        if  len(columns) > 9:
-            
-        elif :
-            pass
-        else:
-            reordered_columns_cde.extend(columns[8:])
-
+        reordered_columns_cde.extend(columns[8:])
 
         # Join the reordered columns with tabs
         line =""
@@ -77,7 +90,6 @@ def process_text2(input_text):
         line = line.replace("Hong Kong","香港")
         line = line.replace("Xiamen","厦门")
         line = line.replace("Toronto","多伦多")
-        line = line.replace("layover in","候机")
 
         line = line.replace("Montreal","蒙特利")
         line = line.replace("Tokyo","东京")
@@ -85,11 +97,14 @@ def process_text2(input_text):
  
         line = line.replace("Unselect this return","")
         line = reorderText(line)
-        
-        cleaned_text = cleaned_text +'\n' + line
-
-        # if "Total_" in line:
+        line = line.replace("layover in","候机")
+        if "Total_" in line:
         #     cleaned_text = cleaned_text +'\n'
+            line = re.sub("Total_","\nTotal_",line)
+            
+        cleaned_text = cleaned_text +'\n' + line
+        
+
 
     return cleaned_text
 
