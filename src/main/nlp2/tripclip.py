@@ -3,6 +3,21 @@ import logging
 import re
 import datetime
 
+#To transform the input "12h 45m 候机 香港" into "香港候机 12小时 45m,"
+def transform_text(input_text):
+    # Split the input into words and numbers
+    words_and_numbers = re.findall(r'\d+[hH]\s*\d+[mM]|\S+', input_text)
+
+    # Split the numbers and words
+    numbers = [word for word in words_and_numbers if re.match(r'\d+[hH]\s*\d+[mM]', word)]
+    words = [word for word in words_and_numbers if not re.match(r'\d+[hH]\s*\d+[mM]', word)]
+
+    # Create the transformed text
+    transformed_text = ' '.join(words) + ' ' + ' '.join(numbers)
+
+    return transformed_text
+
+
 
 def format_datetime(date_str, time_str):
     # Combine the date and time strings
@@ -22,12 +37,23 @@ def reorderText(input_text):
         reordered_columns_cde = [
             columns[0], columns[1], columns[4], date_time_1, columns[7], date_time_2
         ]
-        reordered_columns_cde.extend(columns[8:])
+
+        if  len(columns) > 9:
+            
+        elif :
+            pass
+        else:
+            reordered_columns_cde.extend(columns[8:])
+
+
         # Join the reordered columns with tabs
         line =""
         line = '\t'.join(reordered_columns_cde)
+
+
         return line
     else:
+
         return input_text
 
 def process_text2(input_text):
@@ -46,17 +72,25 @@ def process_text2(input_text):
             if "--END--" in line:
                 break
         line = line.replace("This is a nearby airport","")
-        line = line.replace("Economy	Nonstop","")
+        line = line.replace("Economy	Nonstop","飞行")
         line = line.replace("Vancouver","温哥华")
         line = line.replace("Hong Kong","香港")
         line = line.replace("Xiamen","厦门")
         line = line.replace("Toronto","多伦多")
-        line = line.replace("layover in","侯机")
+        line = line.replace("layover in","候机")
+
+        line = line.replace("Montreal","蒙特利")
+        line = line.replace("Tokyo","东京")
+        line = line.replace("Shanghai","上海")
+ 
         line = line.replace("Unselect this return","")
         line = reorderText(line)
         
         cleaned_text = cleaned_text +'\n' + line
-        
+
+        # if "Total_" in line:
+        #     cleaned_text = cleaned_text +'\n'
+
     return cleaned_text
 
 
@@ -68,6 +102,8 @@ def process_text(input_text):
     input_text = input_text.replace("SELECT", "")
     input_text = input_text.replace("(18.34 km. away from YTZ)", "")
     input_text = input_text.replace("(long connection)", "")
+    input_text = input_text.replace("(short connection)", "")
+    
     input_text = input_text.replace("Operated by Air Canada", ".")
     input_text = input_text.replace("(taxes) =", "\n")
     input_text = input_text.replace("Final total price (taxes included)", "含税价.")
@@ -133,7 +169,7 @@ def save_clipboard_as_html():
         file.write(timestamp)
         file.write(normaltxt)
     # then the file will be Closed automatic, then copy to clipboard again
-    # pyperclip.copy(normaltxt)
+    pyperclip.copy(normaltxt)
 
 
 # ------------------------main 
