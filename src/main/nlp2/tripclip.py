@@ -51,7 +51,11 @@ def reorderText(input_text):
             columns[8] = columns[9]
             columns[9] = newcolum8
 
-            #print (newcolum8)        
+        if not " - " in columns[8]:
+            swx = columns[8]
+            columns[8] = columns[9]
+            columns[9] = swx 
+
         # Format date and time columns 2 and 3
         date_time_1 = format_datetime(columns[3], columns[2])
         date_time_2 = format_datetime(columns[6], columns[5])
@@ -73,7 +77,8 @@ def reorderText(input_text):
 
 def process_text2(input_text):
 
-    input_text = re.sub("Total_Time::","Total_Time\t",input_text)
+    input_text = re.sub("Total_Time::","\nTotal_Time\t",input_text)
+    input_text = re.sub("\n\nTotal_Time","\nTotal_Time",input_text)
     # Split the input into lines
     lines = input_text.split('\n')
     # Initialize a variable to store non-blank lines
