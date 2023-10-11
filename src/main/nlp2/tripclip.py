@@ -73,7 +73,7 @@ def reorderText(input_text):
 
 def process_text2(input_text):
 
-    input_text = re.sub("\nTotal_Time","\tTotal_Time",input_text)
+    input_text = re.sub("Total_Time::","Total_Time\t",input_text)
     # Split the input into lines
     lines = input_text.split('\n')
     # Initialize a variable to store non-blank lines
@@ -100,9 +100,7 @@ def process_text2(input_text):
         line = line.replace("Unselect this return","")
         line = reorderText(line)
         line = line.replace("layover in","候机")
-        if "Total_" in line:
-        #     cleaned_text = cleaned_text +'\n'
-            line = re.sub("Total_","\nTotal_",line)
+
 
         cleaned_text = cleaned_text +'\n' + line
         
